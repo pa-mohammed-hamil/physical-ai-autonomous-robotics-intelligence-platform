@@ -1,0 +1,49 @@
+# ingress: deployment template intentionally disabled.
+# Configure image, storage, RBAC, credentials, resource limits, and security before applying.
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: physical-ai-ingress
+  namespace: physical-ai
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "25m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+spec:
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+        - robotics.example.com
+        - api.robotics.example.com
+      secretName: physical-ai-tls
+
+  rules:
+    # Frontend
+    - host: robotics.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: physical-ai-frontend
+                port:
+                  number: 80
+
+    # FastAPI Backend
+    - host: api.robotics.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: physical-ai-backend
+                port:
+                  number: 8000

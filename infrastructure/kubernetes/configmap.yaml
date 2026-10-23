@@ -1,0 +1,49 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: physical-ai-config
+  namespace: physical-ai
+data:
+  APP_NAME: "Physical AI Robotics Intelligence"
+  APP_ENV: "production"
+  DEBUG: "false"
+  LOG_LEVEL: "INFO"
+
+  API_HOST: "0.0.0.0"
+  API_PORT: "8000"
+  API_PREFIX: "/api/v1"
+
+  ROBOT_MODE: "simulation"
+  SIMULATION_ENABLED: "true"
+  SIMULATION_ONLY: "true"
+  HARDWARE_ACTUATION_ENABLED: "false"
+  PHYSICAL_ROBOT_CONTROL_ENABLED: "false"
+  ACTUATOR_COMMANDS_ENABLED: "false"
+  REMOTE_MOTION_COMMANDS_ENABLED: "false"
+  EMERGENCY_STOP_RESET_ENABLED: "false"
+
+  ML_ENABLED: "true"
+  ML_DEVICE: "cpu"
+  ML_SERVER_URL: "http://physical-ai-model-server:8001"
+
+  RAG_ENABLED: "true"
+  AGENTS_ENABLED: "true"
+  MULTI_AGENT_ENABLED: "true"
+  HUMAN_APPROVAL_REQUIRED: "true"
+
+  ROBOT_HEALTH_MONITORING_ENABLED: "true"
+  ANOMALY_DETECTION_ENABLED: "true"
+  FAILURE_PREDICTION_ENABLED: "true"
+  PREDICTIVE_MAINTENANCE_ENABLED: "true"
+
+  TELEMETRY_ENABLED: "true"
+  TELEMETRY_INTERVAL_MS: "1000"
+
+  SAFETY_MONITORING_ENABLED: "true"
+  COLLISION_DETECTION_ENABLED: "true"
+
+  REDIS_URL: "redis://redis:6379/0"
+
+  METRICS_ENABLED: "true"
+  AUDIT_LOGGING_ENABLED: "true"

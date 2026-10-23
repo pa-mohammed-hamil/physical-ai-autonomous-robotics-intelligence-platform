@@ -1,0 +1,81 @@
+# workers: deployment template intentionally disabled.
+# Configure image, storage, RBAC, credentials, resource limits, and security before applying.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: physical-ai-worker
+  namespace: physical-ai
+  labels:
+    app: physical-ai-worker
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: physical-ai-worker
+
+  template:
+    metadata:
+      labels:
+        app: physical-ai-worker
+
+    spec:
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: celery-worker
+          image: physical-ai-worker:latest
+          imagePullPolicy: IfNotPresent
+
+          command:
+            - celery
+            - -A
+            - backend.workers.celery_app
+            - worker
+            - --loglevel=info
+            - --concurrency=2
+            - --queues=default,telemetry,maintenance,predictions,reports
+
+          envFrom:
+            - configMapRef:
+                name: physical-ai-config
+            - secretRef:
+                name: physical-ai-secrets
+
+          env:
+            - name: CELERY_BROKER_URL
+              value: redis://redis:6379/0
+
+            - name: CELERY_RESULT_BACKEND
+              value: redis://redis:6379/1
+
+            - name: ML_SERVER_URL
+              value: http://physical-ai-model-server:8001
+
+            - name: ROBOT_MODE
+              value: simulation
+
+            - name: SIMULATION_ONLY
+              value: "true"
+
+            - name: HARDWARE_ACTUATION_ENABLED
+              value: "false"
+
+            - name: ACTUATOR_COMMANDS_ENABLED
+              value: "false"
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL

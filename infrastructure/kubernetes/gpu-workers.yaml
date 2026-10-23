@@ -1,0 +1,4 @@
+# gpu-workers: deployment template intentionally disabled.
+# Configure image, storage, RBAC, credentials, resource limits, and security before applying.
+new freatures 27
+
