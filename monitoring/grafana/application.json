@@ -1,0 +1,47 @@
+
+{
+  "application": {
+    "name": "Physical AI & Autonomous Robotics Intelligence Platform",
+    "version": "1.0.0",
+    "environment": "development",
+    "debug": true
+  },
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "database": {
+    "url": "sqlite:///storage/robotics_demo.db"
+  },
+  "robot": {
+    "mode": "simulation",
+    "default_type": "mobile_robot",
+    "max_robots": 10,
+    "physical_control_enabled": false
+  },
+  "simulation": {
+    "enabled": true,
+    "steps": 200,
+    "time_step": 0.1,
+    "seed": 42
+  },
+  "ai": {
+    "enabled": true,
+    "anomaly_detection": true,
+    "failure_prediction": true,
+    "predictive_maintenance": true,
+    "computer_vision": true,
+    "rag": true,
+    "agents": true
+  },
+  "safety": {
+    "emergency_stop_enabled": true,
+    "simulation_only": true,
+    "human_approval_required": true,
+    "hardware_actuation_enabled": false
+  },
+  "logging": {
+    "level": "INFO",
+    "directory": "logs"
+  }
+}

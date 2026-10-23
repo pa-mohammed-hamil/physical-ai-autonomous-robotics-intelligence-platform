@@ -1,0 +1,121 @@
+
+{
+  "version": "1.0.0",
+  "simulation_only": true,
+  "maintenance": {
+    "enabled": true,
+    "mode": "predictive",
+    "monitoring_interval_seconds": 10,
+    "automatic_work_order_creation": true,
+    "human_approval_required": true
+  },
+  "maintenance_types": [
+    "preventive",
+    "predictive",
+    "corrective",
+    "emergency"
+  ],
+  "components": {
+    "motor": {
+      "enabled": true,
+      "temperature_warning_c": 75,
+      "temperature_critical_c": 95,
+      "vibration_warning_mm_s": 6,
+      "vibration_critical_mm_s": 12,
+      "monitor_current": true,
+      "monitor_bearing_wear": true
+    },
+    "battery": {
+      "enabled": true,
+      "soc_warning_percent": 15,
+      "soc_critical_percent": 5,
+      "temperature_warning_c": 48,
+      "temperature_critical_c": 65,
+      "monitor_state_of_health": true
+    },
+    "sensors": {
+      "enabled": true,
+      "monitor_drift": true,
+      "monitor_dropout": true,
+      "monitor_calibration": true,
+      "monitor_communication": true
+    },
+    "joints": {
+      "enabled": true,
+      "position_error_warning_deg": 5,
+      "position_error_critical_deg": 15,
+      "monitor_torque": true,
+      "monitor_wear": true
+    },
+    "actuators": {
+      "enabled": true,
+      "temperature_warning_c": 75,
+      "temperature_critical_c": 95,
+      "monitor_overload": true,
+      "monitor_stall": true
+    },
+    "cooling_system": {
+      "enabled": true,
+      "minimum_cooling_efficiency": 0.3,
+      "monitor_fan": true,
+      "monitor_overheating": true
+    }
+  },
+  "ai_prediction": {
+    "enabled": true,
+    "anomaly_detection": true,
+    "failure_prediction": true,
+    "rul_prediction": true,
+    "health_score_prediction": true,
+    "maintenance_recommendations": true,
+    "failure_probability_warning": 0.6,
+    "failure_probability_critical": 0.85,
+    "rul_warning_hours": 200,
+    "rul_critical_hours": 50
+  },
+  "work_orders": {
+    "enabled": true,
+    "statuses": [
+      "pending",
+      "approved",
+      "in_progress",
+      "completed",
+      "cancelled"
+    ],
+    "priorities": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "require_technician_assignment": true,
+    "require_human_approval": true
+  },
+  "cost_estimation": {
+    "enabled": true,
+    "currency": "INR",
+    "include_parts_cost": true,
+    "include_labor_cost": true,
+    "include_downtime_cost": true,
+    "include_replacement_cost": true
+  },
+  "alerts": {
+    "enabled": true,
+    "notify_on_predicted_failure": true,
+    "notify_on_low_rul": true,
+    "notify_on_critical_health": true,
+    "notify_on_maintenance_due": true
+  },
+  "safety": {
+    "simulated_emergency_stop_enabled": true,
+    "human_review_required": true,
+    "physical_robot_control_enabled": false,
+    "hardware_actuation_enabled": false,
+    "automatic_emergency_stop_reset_enabled": false
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "output": "reports/maintenance.json"
+  }
+}

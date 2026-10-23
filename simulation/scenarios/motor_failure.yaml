@@ -1,0 +1,4 @@
+name: motor_failure
+mode: simulation_only
+enabled: false
+description: "Example motor failure scenario; configure simulator assets before enabling."

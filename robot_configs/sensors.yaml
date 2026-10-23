@@ -1,0 +1,242 @@
+
+version: "1.0.0"
+
+application:
+  name: "Physical AI & Autonomous Robotics Intelligence Platform"
+  environment: development
+  simulation_only: true
+
+sensors:
+  enabled: true
+  mode: simulation
+  monitoring_interval_ms: 100
+  timestamp_format: ISO8601
+
+  camera:
+    enabled: true
+    type: rgb
+    resolution: [1280, 720]
+    fps: 30
+    field_of_view_deg: 90
+    features:
+      object_detection: true
+      object_tracking: true
+      human_detection: true
+      defect_detection: true
+      image_classification: true
+
+  depth_camera:
+    enabled: true
+    resolution: [640, 480]
+    fps: 30
+    min_range_m: 0.2
+    max_range_m: 10.0
+    features:
+      depth_estimation: true
+      obstacle_detection: true
+      point_cloud_generation: true
+
+  lidar:
+    enabled: true
+    type: lidar_2d
+    update_rate_hz: 10
+    min_range_m: 0.1
+    max_range_m: 30.0
+    field_of_view_deg: 360
+    angular_resolution_deg: 0.5
+    features:
+      obstacle_detection: true
+      mapping: true
+      slam: true
+      localization: true
+
+  imu:
+    enabled: true
+    update_rate_hz: 100
+    accelerometer: true
+    gyroscope: true
+    magnetometer: true
+    features:
+      orientation_estimation: true
+      motion_tracking: true
+      balance_monitoring: true
+      fall_detection: true
+
+  gps:
+    enabled: true
+    update_rate_hz: 1
+    position_accuracy_m: 2.5
+    features:
+      position_tracking: true
+      route_tracking: true
+      outdoor_navigation: true
+
+  wheel_encoder:
+    enabled: true
+    update_rate_hz: 100
+    ticks_per_revolution: 2048
+    features:
+      wheel_speed: true
+      odometry: true
+      distance_tracking: true
+
+  joint_encoder:
+    enabled: true
+    update_rate_hz: 100
+    position_unit: rad
+    velocity_unit: rad_s
+    features:
+      joint_position: true
+      joint_velocity: true
+      position_error_detection: true
+
+  ultrasonic:
+    enabled: true
+    update_rate_hz: 20
+    min_range_m: 0.02
+    max_range_m: 4.0
+    features:
+      obstacle_detection: true
+      distance_measurement: true
+
+  proximity:
+    enabled: true
+    update_rate_hz: 20
+    detection_range_m: 2.0
+    features:
+      object_proximity: true
+      human_proximity: true
+      collision_warning: true
+
+  force_torque:
+    enabled: true
+    update_rate_hz: 100
+    force_unit: N
+    torque_unit: Nm
+    features:
+      force_measurement: true
+      torque_measurement: true
+      grasp_feedback: true
+      overload_detection: true
+
+  temperature:
+    enabled: true
+    update_rate_hz: 10
+    unit: celsius
+    components:
+      - motor
+      - battery
+      - actuator
+      - controller
+      - bearing
+    thresholds:
+      motor_warning_c: 75
+      motor_critical_c: 95
+      battery_warning_c: 48
+      battery_critical_c: 65
+
+  vibration:
+    enabled: true
+    update_rate_hz: 100
+    unit: mm_s
+    warning_threshold: 6
+    critical_threshold: 12
+    features:
+      bearing_fault_detection: true
+      motor_anomaly_detection: true
+      predictive_maintenance: true
+
+  battery_monitor:
+    enabled: true
+    update_rate_hz: 10
+    measurements:
+      - voltage
+      - current
+      - temperature
+      - state_of_charge
+      - state_of_health
+      - charge_cycles
+    thresholds:
+      soc_warning_percent: 15
+      soc_critical_percent: 5
+      temperature_warning_c: 48
+      temperature_critical_c: 65
+
+sensor_fusion:
+  enabled: true
+  algorithm: extended_kalman_filter
+  fuse:
+    - imu
+    - gps
+    - wheel_encoder
+    - lidar
+  features:
+    localization: true
+    pose_estimation: true
+    velocity_estimation: true
+    navigation_support: true
+
+sensor_health:
+  enabled: true
+  monitoring_interval_seconds: 5
+  anomaly_detection: true
+  dropout_detection: true
+  drift_detection: true
+  noise_detection: true
+  calibration_monitoring: true
+  communication_monitoring: true
+
+  thresholds:
+    warning_health_score: 0.65
+    critical_health_score: 0.25
+    warning_latency_ms: 250
+    critical_latency_ms: 1500
+    warning_noise_score: 0.10
+    critical_noise_score: 0.25
+
+failure_simulation:
+  enabled: true
+  random_seed: 42
+  failure_probability: 0.02
+
+  scenarios:
+    - sensor_dropout
+    - sensor_drift
+    - excessive_noise
+    - frozen_reading
+    - communication_loss
+    - calibration_failure
+    - intermittent_failure
+    - out_of_range
+
+ai:
+  enabled: true
+  sensor_anomaly_detection: true
+  sensor_failure_prediction: true
+  sensor_health_prediction: true
+  remaining_useful_life_prediction: true
+  predictive_maintenance: true
+
+telemetry:
+  enabled: true
+  collection_interval_ms: 1000
+  websocket_endpoint: "/ws/telemetry"
+  save_to_database: true
+  save_to_csv: true
+  save_to_json: true
+
+safety:
+  enabled: true
+  simulation_only: true
+  critical_sensor_failure_alert: true
+  simulated_motion_inhibition: true
+  simulated_emergency_stop: true
+  human_review_required: true
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  automatic_emergency_stop_reset_enabled: false
+
+logging:
+  enabled: true
+  level: INFO
+  output: "reports/sensor_events.json"

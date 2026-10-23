@@ -1,0 +1,134 @@
+
+{
+  "version": "1.0.0",
+  "simulation_only": true,
+  "enabled": true,
+  "random_seed": 42,
+  "failure_probability": 0.02,
+  "failures": [
+    {
+      "id": "F001",
+      "name": "motor_failure",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.02,
+      "parameters": {
+        "motor_temperature_c": 105,
+        "motor_current_a": 35,
+        "vibration_mm_s": 15
+      }
+    },
+    {
+      "id": "F002",
+      "name": "joint_failure",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.02,
+      "parameters": {
+        "joint_position_error_deg": 20,
+        "joint_velocity_rad_s": 0
+      }
+    },
+    {
+      "id": "F003",
+      "name": "sensor_failure",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.03,
+      "parameters": {
+        "sensor_health_score": 0.1,
+        "sensor_dropout": true
+      }
+    },
+    {
+      "id": "F004",
+      "name": "overheating",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.02,
+      "parameters": {
+        "motor_temperature_c": 100,
+        "battery_temperature_c": 68,
+        "cooling_efficiency": 0.1
+      }
+    },
+    {
+      "id": "F005",
+      "name": "battery_emergency",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.01,
+      "parameters": {
+        "battery_soc_percent": 4,
+        "battery_temperature_c": 70
+      }
+    },
+    {
+      "id": "F006",
+      "name": "collision_risk",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.02,
+      "parameters": {
+        "obstacle_distance_m": 0.2,
+        "human_distance_m": 0.5
+      }
+    },
+    {
+      "id": "F007",
+      "name": "communication_loss",
+      "enabled": true,
+      "severity": "critical",
+      "probability": 0.02,
+      "parameters": {
+        "communication_connected": false,
+        "communication_latency_ms": 3000
+      }
+    },
+    {
+      "id": "F008",
+      "name": "cooling_failure",
+      "enabled": true,
+      "severity": "high",
+      "probability": 0.03,
+      "parameters": {
+        "fan_operational": false,
+        "cooling_efficiency": 0.05
+      }
+    },
+    {
+      "id": "F009",
+      "name": "motor_overload",
+      "enabled": true,
+      "severity": "high",
+      "probability": 0.03,
+      "parameters": {
+        "motor_load_percent": 145
+      }
+    },
+    {
+      "id": "F010",
+      "name": "thermal_sensor_fault",
+      "enabled": true,
+      "severity": "high",
+      "probability": 0.02,
+      "parameters": {
+        "sensor_health_score": 0.15,
+        "temperature_sensor_offset_c": 30
+      }
+    }
+  ],
+  "safety": {
+    "human_review_required": true,
+    "simulated_emergency_stop_enabled": true,
+    "simulated_motion_inhibition_enabled": true,
+    "physical_robot_control_enabled": false,
+    "hardware_actuation_enabled": false,
+    "automatic_emergency_stop_reset_enabled": false
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "output": "reports/failure_events.json"
+  }
+}

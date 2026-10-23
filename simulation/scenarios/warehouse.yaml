@@ -1,0 +1,4 @@
+name: warehouse
+mode: simulation_only
+enabled: false
+description: "Example warehouse scenario; configure simulator assets before enabling."

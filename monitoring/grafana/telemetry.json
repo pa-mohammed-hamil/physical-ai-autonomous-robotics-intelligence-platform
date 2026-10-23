@@ -1,0 +1,149 @@
+
+{
+  "version": "1.0.0",
+  "simulation_only": true,
+  "telemetry": {
+    "enabled": true,
+    "mode": "simulation",
+    "collection_interval_ms": 1000,
+    "batch_size": 100,
+    "max_robots": 100,
+    "timestamp_format": "ISO8601",
+    "timezone": "UTC"
+  },
+  "robot": {
+    "collect_robot_id": true,
+    "collect_robot_type": true,
+    "collect_robot_status": true,
+    "collect_health_score": true,
+    "collect_uptime": true
+  },
+  "motor": {
+    "enabled": true,
+    "collect_temperature": true,
+    "collect_current": true,
+    "collect_voltage": true,
+    "collect_rpm": true,
+    "collect_torque": true,
+    "collect_vibration": true,
+    "collect_motor_health": true
+  },
+  "battery": {
+    "enabled": true,
+    "collect_soc": true,
+    "collect_soh": true,
+    "collect_voltage": true,
+    "collect_current": true,
+    "collect_temperature": true,
+    "collect_charge_cycles": true
+  },
+  "joints": {
+    "enabled": true,
+    "collect_position": true,
+    "collect_velocity": true,
+    "collect_acceleration": true,
+    "collect_torque": true,
+    "collect_temperature": true,
+    "collect_position_error": true
+  },
+  "sensors": {
+    "enabled": true,
+    "sensor_types": [
+      "camera",
+      "lidar",
+      "imu",
+      "gps",
+      "encoder",
+      "ultrasonic",
+      "temperature",
+      "force_torque",
+      "proximity"
+    ],
+    "collect_health": true,
+    "collect_latency": true,
+    "collect_drift": true,
+    "collect_dropout": true,
+    "collect_noise": true
+  },
+  "navigation": {
+    "enabled": true,
+    "collect_position": true,
+    "collect_orientation": true,
+    "collect_speed": true,
+    "collect_heading": true,
+    "collect_obstacle_distance": true,
+    "collect_collision_risk": true
+  },
+  "communication": {
+    "enabled": true,
+    "collect_connection_status": true,
+    "collect_latency": true,
+    "collect_packet_loss": true,
+    "collect_signal_strength": true,
+    "collect_heartbeat": true
+  },
+  "ai_monitoring": {
+    "enabled": true,
+    "collect_anomaly_score": true,
+    "collect_failure_probability": true,
+    "collect_rul_hours": true,
+    "collect_prediction_confidence": true,
+    "collect_inference_latency": true,
+    "collect_model_version": true
+  },
+  "safety": {
+    "enabled": true,
+    "collect_emergency_stop_status": true,
+    "collect_collision_alerts": true,
+    "collect_human_proximity": true,
+    "collect_overheating_alerts": true,
+    "collect_failure_events": true,
+    "physical_robot_control_enabled": false,
+    "hardware_actuation_enabled": false
+  },
+  "streaming": {
+    "enabled": true,
+    "protocol": "websocket",
+    "websocket_endpoint": "/ws/telemetry",
+    "mqtt_enabled": false,
+    "kafka_enabled": false
+  },
+  "storage": {
+    "enabled": true,
+    "database": "postgresql",
+    "save_to_database": true,
+    "save_to_csv": true,
+    "save_to_json": true,
+    "retention_days": 30,
+    "csv_path": "data/telemetry/robot_telemetry.csv",
+    "json_path": "data/telemetry/robot_telemetry.json"
+  },
+  "dashboard": {
+    "enabled": true,
+    "refresh_interval_seconds": 1,
+    "show_live_telemetry": true,
+    "show_motor_metrics": true,
+    "show_battery_metrics": true,
+    "show_sensor_health": true,
+    "show_robot_location": true,
+    "show_ai_predictions": true,
+    "show_safety_alerts": true
+  },
+  "alerts": {
+    "enabled": true,
+    "anomaly_detection": true,
+    "failure_detection": true,
+    "threshold_monitoring": true,
+    "severity_levels": [
+      "info",
+      "warning",
+      "high",
+      "critical"
+    ]
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "output": "reports/telemetry_events.json"
+  }
+}

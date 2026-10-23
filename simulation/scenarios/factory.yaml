@@ -1,0 +1,4 @@
+name: factory
+mode: simulation_only
+enabled: false
+description: "Example factory scenario; configure simulator assets before enabling."

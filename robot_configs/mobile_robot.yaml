@@ -1,0 +1,194 @@
+
+version: "1.0.0"
+
+robot:
+  id: "MOBILE_ROBOT_001"
+  name: "Autonomous Mobile Robot"
+  type: mobile_robot
+  enabled: true
+  mode: simulation
+
+  description: "Autonomous mobile robot for navigation and fleet simulation"
+
+  physical_properties:
+    mass_kg: 25.0
+    length_m: 0.6
+    width_m: 0.45
+    height_m: 0.35
+    wheel_radius_m: 0.1
+    wheel_separation_m: 0.4
+    number_of_wheels: 2
+
+  initial_pose:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    yaw_rad: 0.0
+
+drive:
+  enabled: true
+  type: differential_drive
+  controller: mobile_robot_controller
+
+  limits:
+    max_linear_velocity_mps: 1.5
+    max_angular_velocity_rad_s: 1.0
+    max_linear_acceleration_mps2: 0.8
+
+  motors:
+    left_motor:
+      enabled: true
+      max_rpm: 150
+      max_temperature_c: 95
+
+    right_motor:
+      enabled: true
+      max_rpm: 150
+      max_temperature_c: 95
+
+sensors:
+  enabled: true
+
+  lidar:
+    enabled: true
+    range_m: 20.0
+    field_of_view_deg: 360
+    update_rate_hz: 10
+
+  camera:
+    enabled: true
+    resolution: [1280, 720]
+    fps: 30
+
+  imu:
+    enabled: true
+    update_rate_hz: 100
+
+  gps:
+    enabled: false
+    update_rate_hz: 1
+
+  ultrasonic:
+    enabled: true
+    range_m: 4.0
+
+  wheel_encoder:
+    enabled: true
+    update_rate_hz: 100
+
+navigation:
+  enabled: true
+  mode: autonomous_simulation
+
+  localization:
+    enabled: true
+    algorithm: ekf
+
+  mapping:
+    enabled: true
+    algorithm: lidar_slam
+
+  path_planning:
+    enabled: true
+    global_planner: astar
+    local_planner: dwa
+
+  obstacle_avoidance:
+    enabled: true
+    warning_distance_m: 2.0
+    critical_distance_m: 0.7
+
+  goal_tolerance_m: 0.2
+  path_replanning_enabled: true
+
+battery:
+  enabled: true
+  capacity_ah: 20.0
+  nominal_voltage_v: 24.0
+  initial_soc_percent: 100
+
+  monitoring:
+    voltage: true
+    current: true
+    temperature: true
+    state_of_health: true
+
+  thresholds:
+    soc_warning_percent: 15
+    soc_critical_percent: 5
+    temperature_warning_c: 48
+    temperature_critical_c: 65
+
+ai:
+  enabled: true
+  anomaly_detection: true
+  motor_failure_prediction: true
+  battery_health_prediction: true
+  sensor_failure_detection: true
+  remaining_useful_life_prediction: true
+  predictive_maintenance: true
+
+health_monitoring:
+  enabled: true
+  interval_seconds: 5
+
+  metrics:
+    - robot_health_score
+    - motor_temperature
+    - motor_current
+    - motor_vibration
+    - battery_soc
+    - battery_temperature
+    - sensor_health
+    - communication_latency
+    - failure_probability
+    - rul_hours
+
+safety:
+  enabled: true
+  simulation_only: true
+
+  collision_detection: true
+  human_detection: true
+  simulated_emergency_stop: true
+  simulated_motion_inhibition: true
+  human_review_required: true
+
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  remote_motion_commands_enabled: false
+  automatic_emergency_stop_reset_enabled: false
+
+communication:
+  enabled: true
+  protocol: websocket
+  telemetry_endpoint: "/ws/telemetry"
+  heartbeat_interval_seconds: 5
+
+telemetry:
+  enabled: true
+  collection_interval_ms: 1000
+  save_to_database: true
+  save_to_csv: true
+  save_to_json: true
+
+simulation:
+  enabled: true
+  engine: gazebo
+  time_step_seconds: 0.01
+  duration_seconds: 300
+  random_seed: 42
+
+  scenarios:
+    - warehouse
+    - navigation
+    - obstacle_avoidance
+    - motor_failure
+    - sensor_failure
+    - overheating
+    - emergency
+
+logging:
+  enabled: true
+  level: INFO
+  output: "reports/mobile_robot.json"

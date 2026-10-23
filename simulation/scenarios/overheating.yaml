@@ -1,0 +1,4 @@
+name: overheating
+mode: simulation_only
+enabled: false
+description: "Example overheating scenario; configure simulator assets before enabling."

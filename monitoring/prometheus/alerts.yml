@@ -1,0 +1,209 @@
+
+version: "1.0.0"
+
+application:
+  name: "Physical AI & Autonomous Robotics Intelligence Platform"
+  environment: "development"
+  simulation_only: true
+
+alerts:
+  enabled: true
+  monitoring_interval_seconds: 5
+  deduplication_window_seconds: 60
+  cooldown_seconds: 30
+  max_alerts_per_minute: 100
+
+  severity_levels:
+    - info
+    - warning
+    - high
+    - critical
+
+  rules:
+
+    motor_overheating:
+      enabled: true
+      metric: motor_temperature_c
+      warning_threshold: 75
+      critical_threshold: 95
+      condition: greater_than
+      message: "Robot motor temperature exceeded threshold"
+
+    motor_overcurrent:
+      enabled: true
+      metric: motor_current_a
+      warning_threshold: 18
+      critical_threshold: 30
+      condition: greater_than
+      message: "Motor current is above safe operating range"
+
+    excessive_vibration:
+      enabled: true
+      metric: motor_vibration_mm_s
+      warning_threshold: 6
+      critical_threshold: 12
+      condition: greater_than
+      message: "Abnormal motor vibration detected"
+
+    low_battery:
+      enabled: true
+      metric: battery_soc_percent
+      warning_threshold: 15
+      critical_threshold: 5
+      condition: less_than
+      message: "Robot battery charge is critically low"
+
+    battery_overheating:
+      enabled: true
+      metric: battery_temperature_c
+      warning_threshold: 48
+      critical_threshold: 65
+      condition: greater_than
+      message: "Battery overheating detected"
+
+    sensor_failure:
+      enabled: true
+      metric: sensor_health_score
+      warning_threshold: 0.65
+      critical_threshold: 0.25
+      condition: less_than
+      message: "Robot sensor health degraded"
+
+    joint_failure:
+      enabled: true
+      metric: joint_position_error_deg
+      warning_threshold: 5
+      critical_threshold: 15
+      condition: greater_than
+      message: "Robot joint position error detected"
+
+    collision_risk:
+      enabled: true
+      metric: obstacle_distance_m
+      warning_threshold: 2.0
+      critical_threshold: 0.7
+      condition: less_than
+      message: "Potential robot collision detected"
+
+    human_proximity:
+      enabled: true
+      metric: human_distance_m
+      warning_threshold: 2.0
+      critical_threshold: 0.7
+      condition: less_than
+      message: "Human detected near robot"
+
+    communication_loss:
+      enabled: true
+      metric: communication_latency_ms
+      warning_threshold: 500
+      critical_threshold: 2000
+      condition: greater_than
+      message: "Robot communication degraded or lost"
+
+    low_robot_health:
+      enabled: true
+      metric: robot_health_score
+      warning_threshold: 60
+      critical_threshold: 30
+      condition: less_than
+      message: "Robot health score below threshold"
+
+    predicted_failure:
+      enabled: true
+      metric: failure_probability
+      warning_threshold: 0.60
+      critical_threshold: 0.85
+      condition: greater_than
+      message: "AI predicts a possible robot component failure"
+
+    low_remaining_useful_life:
+      enabled: true
+      metric: rul_hours
+      warning_threshold: 200
+      critical_threshold: 50
+      condition: less_than
+      message: "Robot component requires maintenance soon"
+
+    robot_offline:
+      enabled: true
+      metric: robot_online
+      expected_value: false
+      condition: equals
+      severity: high
+      message: "Robot is offline"
+
+    emergency_stop:
+      enabled: true
+      metric: simulated_emergency_stop_active
+      expected_value: true
+      condition: equals
+      severity: critical
+      message: "Simulated emergency stop activated"
+
+notifications:
+  enabled: true
+
+  channels:
+    dashboard:
+      enabled: true
+
+    websocket:
+      enabled: true
+      endpoint: "/ws/alerts"
+
+    email:
+      enabled: false
+
+    sms:
+      enabled: false
+
+    webhook:
+      enabled: false
+
+  routing:
+    info:
+      - dashboard
+
+    warning:
+      - dashboard
+      - websocket
+
+    high:
+      - dashboard
+      - websocket
+
+    critical:
+      - dashboard
+      - websocket
+
+predictive_maintenance:
+  enabled: true
+  alert_on_predicted_failure: true
+  alert_on_low_rul: true
+  alert_on_maintenance_due: true
+  create_work_order: true
+  human_approval_required: true
+
+fleet_monitoring:
+  enabled: true
+  alert_on_robot_offline: true
+  alert_on_critical_robot_health: true
+  alert_on_multiple_robot_failures: true
+  multiple_failure_threshold: 3
+
+safety:
+  simulation_only: true
+  simulated_emergency_stop_enabled: true
+  simulated_motion_inhibition_enabled: true
+  human_review_required: true
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  automatic_emergency_stop_reset_enabled: false
+
+logging:
+  enabled: true
+  level: INFO
+  save_alert_history: true
+  output: "reports/alerts.json"
+  retention_days: 30

@@ -1,0 +1,4 @@
+name: emergency
+mode: simulation_only
+enabled: false
+description: "Example emergency scenario; configure simulator assets before enabling."

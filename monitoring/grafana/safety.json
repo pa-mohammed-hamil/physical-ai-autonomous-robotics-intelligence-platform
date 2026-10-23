@@ -1,0 +1,126 @@
+
+{
+  "version": "1.0.0",
+  "simulation_only": true,
+  "safety": {
+    "enabled": true,
+    "mode": "simulation",
+    "monitoring_interval_ms": 100,
+    "human_approval_required": true,
+    "physical_robot_control_enabled": false,
+    "hardware_actuation_enabled": false,
+    "autonomous_physical_execution_enabled": false
+  },
+  "emergency_stop": {
+    "enabled": true,
+    "simulated_only": true,
+    "trigger_on_critical_failure": true,
+    "trigger_on_collision_risk": true,
+    "trigger_on_human_proximity": true,
+    "trigger_on_overheating": true,
+    "trigger_on_communication_loss": true,
+    "automatic_reset_enabled": false,
+    "manual_review_required": true
+  },
+  "collision_prevention": {
+    "enabled": true,
+    "obstacle_detection": true,
+    "human_detection": true,
+    "collision_prediction": true,
+    "warning_distance_m": 2.0,
+    "critical_distance_m": 0.7,
+    "warning_ttc_seconds": 3.0,
+    "critical_ttc_seconds": 1.0,
+    "simulated_motion_inhibition": true
+  },
+  "human_safety": {
+    "enabled": true,
+    "human_proximity_monitoring": true,
+    "warning_distance_m": 2.0,
+    "critical_distance_m": 0.7,
+    "human_override_enabled": true,
+    "human_approval_for_high_risk_actions": true
+  },
+  "thermal_safety": {
+    "enabled": true,
+    "motor_warning_temperature_c": 75,
+    "motor_critical_temperature_c": 95,
+    "battery_warning_temperature_c": 48,
+    "battery_critical_temperature_c": 65,
+    "controller_warning_temperature_c": 70,
+    "controller_critical_temperature_c": 90
+  },
+  "battery_safety": {
+    "enabled": true,
+    "soc_warning_percent": 15,
+    "soc_critical_percent": 5,
+    "monitor_voltage": true,
+    "monitor_current": true,
+    "monitor_temperature": true,
+    "detect_battery_faults": true
+  },
+  "motor_and_joint_safety": {
+    "enabled": true,
+    "motor_overload_detection": true,
+    "joint_failure_detection": true,
+    "actuator_stall_detection": true,
+    "motor_current_warning_a": 18,
+    "motor_current_critical_a": 30,
+    "joint_position_error_warning_deg": 5,
+    "joint_position_error_critical_deg": 15
+  },
+  "sensor_safety": {
+    "enabled": true,
+    "sensor_health_monitoring": true,
+    "sensor_dropout_detection": true,
+    "sensor_drift_detection": true,
+    "sensor_calibration_check": true,
+    "critical_sensor_health_score": 0.25
+  },
+  "communication_safety": {
+    "enabled": true,
+    "heartbeat_monitoring": true,
+    "warning_latency_ms": 500,
+    "critical_latency_ms": 2000,
+    "fail_safe_on_connection_loss": true
+  },
+  "ai_safety": {
+    "enabled": true,
+    "validate_ai_predictions": true,
+    "validate_agent_actions": true,
+    "block_unsafe_actions": true,
+    "human_review_required": true,
+    "prompt_injection_protection": true,
+    "tool_permission_checks": true,
+    "audit_ai_decisions": true
+  },
+  "risk_assessment": {
+    "enabled": true,
+    "risk_levels": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "collision_risk_prediction": true,
+    "failure_risk_prediction": true,
+    "thermal_risk_prediction": true,
+    "human_safety_risk_prediction": true
+  },
+  "alerts": {
+    "enabled": true,
+    "notify_on_emergency": true,
+    "notify_on_collision_risk": true,
+    "notify_on_human_proximity": true,
+    "notify_on_motor_failure": true,
+    "notify_on_sensor_failure": true,
+    "notify_on_overheating": true,
+    "notify_on_communication_loss": true
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "audit_logging": true,
+    "output": "reports/safety_events.json"
+  }
+}

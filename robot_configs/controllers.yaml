@@ -1,0 +1,161 @@
+
+version: "1.0.0"
+
+application:
+  name: "Physical AI & Autonomous Robotics Intelligence Platform"
+  environment: development
+  simulation_only: true
+
+controllers:
+  enabled: true
+  mode: simulation
+  update_rate_hz: 100
+  default_controller: mobile_robot_controller
+
+  mobile_robot_controller:
+    enabled: true
+    type: differential_drive
+    control_mode: velocity
+
+    limits:
+      max_linear_velocity_mps: 1.5
+      max_angular_velocity_rad_s: 1.0
+      max_linear_acceleration_mps2: 0.8
+
+    pid:
+      kp: 1.5
+      ki: 0.1
+      kd: 0.05
+
+  robotic_arm_controller:
+    enabled: true
+    type: joint_trajectory
+    control_mode: position
+    joints:
+      - joint_1
+      - joint_2
+      - joint_3
+      - joint_4
+      - joint_5
+      - joint_6
+
+    limits:
+      max_joint_velocity_rad_s: 1.0
+      max_joint_acceleration_rad_s2: 2.0
+      max_joint_torque_nm: 80
+
+    pid:
+      kp: 10.0
+      ki: 0.1
+      kd: 0.5
+
+  humanoid_controller:
+    enabled: true
+    type: whole_body
+    control_mode: position
+
+    features:
+      balance_control: true
+      walking_control: true
+      posture_control: true
+      joint_coordination: true
+
+    limits:
+      max_walking_speed_mps: 0.8
+      max_joint_velocity_rad_s: 1.0
+
+  quadruped_controller:
+    enabled: true
+    type: locomotion
+    control_mode: velocity
+
+    features:
+      gait_control: true
+      balance_control: true
+      terrain_adaptation: true
+      obstacle_avoidance: true
+
+    gait:
+      default: trot
+      supported:
+        - walk
+        - trot
+        - crawl
+
+    limits:
+      max_speed_mps: 1.5
+
+  navigation_controller:
+    enabled: true
+    type: autonomous_navigation
+
+    features:
+      global_path_planning: true
+      local_path_planning: true
+      obstacle_avoidance: true
+      collision_checking: true
+      path_replanning: true
+
+    parameters:
+      goal_tolerance_m: 0.2
+      obstacle_warning_distance_m: 2.0
+      obstacle_critical_distance_m: 0.7
+
+  manipulation_controller:
+    enabled: true
+    type: pick_and_place
+
+    features:
+      grasp_planning: true
+      trajectory_planning: true
+      inverse_kinematics: true
+      force_feedback: true
+
+    limits:
+      max_gripper_force_n: 40
+      max_payload_kg: 5
+
+  emergency_controller:
+    enabled: true
+    simulation_only: true
+
+    triggers:
+      motor_failure: true
+      joint_failure: true
+      sensor_failure: true
+      collision_risk: true
+      human_proximity: true
+      overheating: true
+      communication_loss: true
+
+    actions:
+      simulated_emergency_stop: true
+      simulated_motion_inhibition: true
+      generate_alert: true
+      create_incident_report: true
+      require_manual_review: true
+
+safety:
+  enabled: true
+  simulation_only: true
+  validate_trajectories: true
+  validate_joint_limits: true
+  validate_velocity_limits: true
+  human_approval_required: true
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  remote_motion_commands_enabled: false
+  automatic_emergency_stop_reset_enabled: false
+
+monitoring:
+  enabled: true
+  collect_controller_status: true
+  collect_joint_states: true
+  collect_trajectory_errors: true
+  collect_control_latency: true
+  collect_safety_events: true
+
+logging:
+  enabled: true
+  level: INFO
+  output: "reports/controller_events.json"

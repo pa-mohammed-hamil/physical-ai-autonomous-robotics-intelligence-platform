@@ -1,0 +1,4 @@
+name: manipulation
+mode: simulation_only
+enabled: false
+description: "Example manipulation scenario; configure simulator assets before enabling."

@@ -1,0 +1,333 @@
+
+version: "1.0.0"
+
+application:
+  name: "Physical AI & Autonomous Robotics Intelligence Platform"
+  environment: development
+  simulation_only: true
+
+robot:
+  id: "ROBOTIC_ARM_001"
+  name: "Physical AI Robotic Arm"
+  type: robotic_arm
+  enabled: true
+  mode: simulation
+
+  physical_properties:
+    degrees_of_freedom: 6
+    mass_kg: 25.0
+    reach_m: 0.85
+    max_payload_kg: 5.0
+
+  base_pose:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
+joints:
+  enabled: true
+  control_mode: position
+
+  names:
+    - joint_1
+    - joint_2
+    - joint_3
+    - joint_4
+    - joint_5
+    - joint_6
+
+  initial_positions_rad:
+    joint_1: 0.0
+    joint_2: 0.0
+    joint_3: 0.0
+    joint_4: 0.0
+    joint_5: 0.0
+    joint_6: 0.0
+
+  limits:
+    joint_1: [-3.14, 3.14]
+    joint_2: [-1.57, 1.57]
+    joint_3: [-2.50, 2.50]
+    joint_4: [-3.14, 3.14]
+    joint_5: [-2.00, 2.00]
+    joint_6: [-3.14, 3.14]
+
+  motion_limits:
+    max_velocity_rad_s: 1.5
+    max_acceleration_rad_s2: 3.0
+    max_torque_nm: 80.0
+
+controllers:
+  enabled: true
+  main_controller: robotic_arm_controller
+
+  joint_controller:
+    enabled: true
+    type: joint_trajectory
+    update_rate_hz: 100
+
+    pid:
+      kp: 10.0
+      ki: 0.1
+      kd: 0.5
+
+  position_controller:
+    enabled: true
+    trajectory_interpolation: cubic
+
+  torque_controller:
+    enabled: true
+    torque_monitoring: true
+    overload_detection: true
+
+  gripper_controller:
+    enabled: true
+    control_mode: position
+    force_feedback: true
+
+kinematics:
+  enabled: true
+
+  forward_kinematics:
+    enabled: true
+
+  inverse_kinematics:
+    enabled: true
+    solver: numerical
+    max_iterations: 100
+    position_tolerance_m: 0.001
+    orientation_tolerance_rad: 0.01
+
+  jacobian:
+    enabled: true
+
+motion_planning:
+  enabled: true
+
+  planner:
+    type: rrt_connect
+    planning_timeout_seconds: 5
+    max_planning_attempts: 10
+
+  trajectory:
+    interpolation: cubic
+    collision_checking: true
+    joint_limit_validation: true
+    velocity_limit_validation: true
+    acceleration_limit_validation: true
+
+  workspace:
+    max_reach_m: 0.85
+    minimum_z_m: 0.05
+    maximum_z_m: 1.5
+
+manipulation:
+  enabled: true
+
+  tasks:
+    pick_and_place: true
+    object_grasping: true
+    object_sorting: true
+    assembly: true
+    inspection: true
+
+  grasp_planning:
+    enabled: true
+    grasp_detection: true
+    grasp_quality_estimation: true
+    collision_free_grasping: true
+
+  pick_and_place:
+    enabled: true
+    approach_distance_m: 0.10
+    lift_height_m: 0.15
+    placement_tolerance_m: 0.01
+
+gripper:
+  enabled: true
+  type: parallel_gripper
+
+  parameters:
+    max_opening_m: 0.08
+    max_grip_force_n: 40
+    grasp_timeout_seconds: 5
+
+  features:
+    force_control: true
+    object_slip_detection: true
+    grasp_confirmation: true
+
+sensors:
+  enabled: true
+
+  rgb_camera:
+    enabled: true
+    resolution: [1280, 720]
+    fps: 30
+
+  depth_camera:
+    enabled: true
+    range_m: 5.0
+    fps: 30
+
+  joint_encoders:
+    enabled: true
+    update_rate_hz: 100
+
+  force_torque_sensor:
+    enabled: true
+    update_rate_hz: 100
+
+  motor_temperature:
+    enabled: true
+
+  motor_current:
+    enabled: true
+
+  proximity_sensor:
+    enabled: true
+    range_m: 2.0
+
+computer_vision:
+  enabled: true
+
+  object_detection: true
+  object_tracking: true
+  object_classification: true
+  instance_segmentation: true
+  depth_estimation: true
+  object_pose_estimation: true
+  grasp_detection: true
+  defect_detection: true
+
+ai:
+  enabled: true
+
+  models:
+    vision_language_model: true
+    vision_language_action: true
+    world_model: true
+    reinforcement_learning: true
+    anomaly_detection: true
+    failure_prediction: true
+    rul_prediction: true
+
+  agents:
+    task_planning: true
+    manipulation: true
+    perception: true
+    motion_planning: true
+    maintenance: true
+    safety: true
+
+  rag:
+    enabled: true
+    robot_manual_retrieval: true
+    maintenance_knowledge: true
+    troubleshooting: true
+
+predictive_maintenance:
+  enabled: true
+
+  motor_health: true
+  joint_health: true
+  actuator_health: true
+  gripper_health: true
+  sensor_health: true
+  anomaly_detection: true
+  failure_prediction: true
+  remaining_useful_life_prediction: true
+  maintenance_recommendations: true
+
+health_monitoring:
+  enabled: true
+  interval_seconds: 5
+
+  metrics:
+    - robot_health_score
+    - motor_temperature
+    - motor_current
+    - motor_vibration
+    - joint_position_error
+    - joint_torque
+    - joint_temperature
+    - actuator_health
+    - gripper_force
+    - sensor_health
+    - failure_probability
+    - rul_hours
+
+safety:
+  enabled: true
+  simulation_only: true
+
+  collision_detection: true
+  self_collision_detection: true
+  human_proximity_detection: true
+  joint_limit_validation: true
+  workspace_limit_validation: true
+  payload_limit_validation: true
+  trajectory_validation: true
+  overload_detection: true
+
+  obstacle_warning_distance_m: 0.5
+  obstacle_critical_distance_m: 0.2
+
+  simulated_emergency_stop: true
+  simulated_motion_inhibition: true
+  human_review_required: true
+
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  remote_motion_commands_enabled: false
+  autonomous_physical_execution_enabled: false
+  automatic_emergency_stop_reset_enabled: false
+
+telemetry:
+  enabled: true
+  collection_interval_ms: 1000
+  websocket_endpoint: "/ws/telemetry"
+
+  metrics:
+    - joint_positions
+    - joint_velocities
+    - joint_torques
+    - end_effector_pose
+    - gripper_status
+    - motor_temperatures
+    - motor_currents
+    - robot_health_score
+    - safety_events
+
+  save_to_database: true
+  save_to_csv: true
+  save_to_json: true
+
+simulation:
+  enabled: true
+  engine: mujoco
+  time_step_seconds: 0.002
+  duration_seconds: 300
+  random_seed: 42
+
+  scenarios:
+    - joint_control
+    - pick_and_place
+    - object_sorting
+    - grasping
+    - assembly
+    - inspection
+    - collision_avoidance
+    - motor_failure
+    - joint_failure
+    - sensor_failure
+    - overheating
+    - emergency
+
+logging:
+  enabled: true
+  level: INFO
+  output: "reports/robotic_arm.json"

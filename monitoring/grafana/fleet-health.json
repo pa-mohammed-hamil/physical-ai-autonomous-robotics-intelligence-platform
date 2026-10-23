@@ -1,0 +1,123 @@
+
+{
+  "version": "1.0.0",
+  "simulation_only": true,
+  "fleet": {
+    "name": "Physical AI Robot Fleet",
+    "enabled": true,
+    "total_robots": 10,
+    "monitoring_interval_seconds": 5,
+    "robot_types": [
+      "mobile_robot",
+      "robotic_arm",
+      "humanoid",
+      "quadruped"
+    ]
+  },
+  "health_monitoring": {
+    "enabled": true,
+    "health_score_range": [0, 100],
+    "status_thresholds": {
+      "healthy": 80,
+      "warning": 60,
+      "critical": 30
+    },
+    "components": {
+      "motor": {
+        "enabled": true,
+        "warning_temperature_c": 75,
+        "critical_temperature_c": 95,
+        "warning_vibration_mm_s": 6,
+        "critical_vibration_mm_s": 12
+      },
+      "battery": {
+        "enabled": true,
+        "warning_soc_percent": 15,
+        "critical_soc_percent": 5,
+        "warning_temperature_c": 48,
+        "critical_temperature_c": 65
+      },
+      "sensors": {
+        "enabled": true,
+        "warning_health_score": 0.65,
+        "critical_health_score": 0.25,
+        "monitor_dropout": true,
+        "monitor_drift": true,
+        "monitor_latency": true
+      },
+      "joints": {
+        "enabled": true,
+        "warning_position_error_deg": 5,
+        "critical_position_error_deg": 15,
+        "monitor_torque": true,
+        "monitor_temperature": true
+      },
+      "communication": {
+        "enabled": true,
+        "warning_latency_ms": 500,
+        "critical_latency_ms": 2000
+      }
+    }
+  },
+  "predictive_maintenance": {
+    "enabled": true,
+    "anomaly_detection": true,
+    "failure_prediction": true,
+    "remaining_useful_life_prediction": true,
+    "maintenance_recommendations": true,
+    "human_approval_required": true
+  },
+  "fleet_analytics": {
+    "enabled": true,
+    "metrics": [
+      "total_robots",
+      "active_robots",
+      "healthy_robots",
+      "degraded_robots",
+      "critical_robots",
+      "offline_robots",
+      "average_health_score",
+      "average_battery_soc",
+      "predicted_failures",
+      "maintenance_due",
+      "safety_incidents"
+    ]
+  },
+  "alerts": {
+    "enabled": true,
+    "severity_levels": [
+      "info",
+      "warning",
+      "high",
+      "critical"
+    ],
+    "notify_on_failure": true,
+    "notify_on_overheating": true,
+    "notify_on_low_battery": true,
+    "notify_on_sensor_failure": true,
+    "notify_on_collision_risk": true
+  },
+  "safety": {
+    "simulated_emergency_stop_enabled": true,
+    "simulated_motion_inhibition_enabled": true,
+    "human_review_required": true,
+    "physical_robot_control_enabled": false,
+    "hardware_actuation_enabled": false,
+    "automatic_emergency_stop_reset_enabled": false
+  },
+  "dashboard": {
+    "enabled": true,
+    "refresh_interval_seconds": 5,
+    "show_fleet_overview": true,
+    "show_robot_health": true,
+    "show_live_telemetry": true,
+    "show_failure_predictions": true,
+    "show_maintenance_schedule": true,
+    "show_safety_alerts": true
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "output": "reports/fleet_health.json"
+  }
+}

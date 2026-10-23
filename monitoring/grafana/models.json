@@ -1,0 +1,109 @@
+
+{
+  "version": "1.0.0",
+  "simulation_only": true,
+  "models": {
+    "enabled": true,
+    "model_directory": "ml/artifacts",
+    "default_device": "auto",
+    "fallback_device": "cpu",
+    "batch_size": 16,
+    "inference_timeout_seconds": 30
+  },
+  "machine_learning": {
+    "anomaly_detection": {
+      "enabled": true,
+      "model": "isolation_forest",
+      "path": "ml/artifacts/anomaly_model.joblib",
+      "threshold": 0.7
+    },
+    "failure_prediction": {
+      "enabled": true,
+      "model": "random_forest",
+      "path": "ml/artifacts/failure_model.joblib",
+      "threshold": 0.75
+    },
+    "rul_prediction": {
+      "enabled": true,
+      "model": "lstm",
+      "path": "ml/artifacts/rul_model.pt",
+      "unit": "hours"
+    },
+    "health_prediction": {
+      "enabled": true,
+      "model": "gradient_boosting",
+      "path": "ml/artifacts/health_model.joblib"
+    }
+  },
+  "computer_vision": {
+    "enabled": true,
+    "object_detection": {
+      "model": "yolo",
+      "path": "ml/artifacts/object_detector.pt",
+      "confidence_threshold": 0.5
+    },
+    "defect_detection": {
+      "model": "efficientnet",
+      "path": "ml/artifacts/defect_detector.pt"
+    },
+    "human_detection": {
+      "enabled": true,
+      "confidence_threshold": 0.6
+    }
+  },
+  "robotics": {
+    "navigation_model": {
+      "enabled": true,
+      "model": "reinforcement_learning",
+      "path": "ml/artifacts/navigation_policy.pt"
+    },
+    "vision_language_action": {
+      "enabled": true,
+      "model": "vla",
+      "path": "ml/artifacts/vla_model.pt",
+      "simulation_only": true
+    },
+    "world_model": {
+      "enabled": true,
+      "model": "neural_world_model",
+      "path": "ml/artifacts/world_model.pt"
+    }
+  },
+  "generative_ai": {
+    "enabled": true,
+    "llm_provider": "configurable",
+    "rag_enabled": true,
+    "multi_agent_enabled": true,
+    "tool_calling_enabled": true,
+    "human_approval_required": true
+  },
+  "evaluation": {
+    "enabled": true,
+    "metrics": [
+      "accuracy",
+      "precision",
+      "recall",
+      "f1_score",
+      "roc_auc",
+      "mae",
+      "rmse",
+      "latency_ms",
+      "inference_cost"
+    ],
+    "monitor_model_drift": true,
+    "monitor_data_drift": true,
+    "monitor_prediction_confidence": true
+  },
+  "safety": {
+    "simulation_only": true,
+    "physical_robot_control_enabled": false,
+    "hardware_actuation_enabled": false,
+    "autonomous_physical_execution_enabled": false,
+    "human_review_required": true
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "output": "reports/model_inference.json"
+  }
+}

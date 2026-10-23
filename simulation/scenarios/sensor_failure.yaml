@@ -1,0 +1,4 @@
+name: sensor_failure
+mode: simulation_only
+enabled: false
+description: "Example sensor failure scenario; configure simulator assets before enabling."

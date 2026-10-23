@@ -1,0 +1,193 @@
+
+version: "1.0.0"
+
+application:
+  name: "Physical AI & Autonomous Robotics Intelligence Platform"
+  environment: development
+  simulation_only: true
+
+safety_limits:
+  enabled: true
+  mode: simulation
+  monitoring_interval_ms: 100
+  human_approval_required: true
+
+  robot_motion:
+    max_linear_velocity_mps: 1.5
+    max_angular_velocity_rad_s: 1.0
+    max_linear_acceleration_mps2: 0.8
+    max_angular_acceleration_rad_s2: 2.0
+
+  motor:
+    warning_temperature_c: 75
+    critical_temperature_c: 95
+    warning_current_a: 18
+    critical_current_a: 30
+    warning_vibration_mm_s: 6
+    critical_vibration_mm_s: 12
+    max_torque_nm: 100
+
+  joints:
+    max_velocity_rad_s: 1.5
+    max_acceleration_rad_s2: 3.0
+    max_torque_nm: 100
+    warning_position_error_deg: 5
+    critical_position_error_deg: 15
+    warning_temperature_c: 75
+    critical_temperature_c: 95
+    enforce_joint_limits: true
+
+  battery:
+    soc_warning_percent: 15
+    soc_critical_percent: 5
+    temperature_warning_c: 48
+    temperature_critical_c: 65
+    monitor_voltage: true
+    monitor_current: true
+    monitor_state_of_health: true
+
+  sensors:
+    warning_health_score: 0.65
+    critical_health_score: 0.25
+    warning_latency_ms: 250
+    critical_latency_ms: 1500
+    detect_dropout: true
+    detect_drift: true
+    detect_calibration_failure: true
+
+  collision:
+    enabled: true
+    obstacle_warning_distance_m: 2.0
+    obstacle_critical_distance_m: 0.7
+    warning_ttc_seconds: 3.0
+    critical_ttc_seconds: 1.0
+    collision_prediction: true
+    simulated_motion_inhibition: true
+
+  human_proximity:
+    enabled: true
+    warning_distance_m: 2.0
+    critical_distance_m: 0.7
+    human_detection_required: true
+    simulated_stop_on_critical_proximity: true
+
+  communication:
+    heartbeat_interval_seconds: 5
+    warning_latency_ms: 500
+    critical_latency_ms: 2000
+    simulated_fail_safe_on_connection_loss: true
+
+robot_specific_limits:
+  mobile_robot:
+    max_speed_mps: 1.5
+    max_turn_rate_rad_s: 1.0
+    max_slope_deg: 10
+    obstacle_avoidance_required: true
+
+  robotic_arm:
+    max_joint_velocity_rad_s: 1.5
+    max_joint_acceleration_rad_s2: 3.0
+    max_payload_kg: 5
+    max_gripper_force_n: 40
+    self_collision_checking: true
+    workspace_limit_checking: true
+    payload_limit_checking: true
+
+  humanoid:
+    max_walking_speed_mps: 0.8
+    max_joint_velocity_rad_s: 1.0
+    max_slope_deg: 10
+    balance_monitoring: true
+    fall_detection: true
+    posture_validation: true
+
+  quadruped:
+    max_forward_speed_mps: 1.5
+    max_lateral_speed_mps: 0.5
+    max_turn_rate_rad_s: 1.0
+    max_slope_deg: 15
+    slip_detection: true
+    fall_detection: true
+    terrain_validation: true
+
+ai_safety:
+  enabled: true
+  validate_model_predictions: true
+  validate_agent_actions: true
+  validate_motion_plans: true
+  validate_trajectories: true
+  reject_out_of_bounds_commands: true
+  human_approval_for_high_risk_actions: true
+  prompt_injection_protection: true
+  audit_ai_decisions: true
+
+emergency_stop:
+  enabled: true
+  simulated_only: true
+
+  triggers:
+    motor_failure: true
+    joint_failure: true
+    critical_overheating: true
+    battery_emergency: true
+    collision_risk: true
+    human_proximity: true
+    critical_sensor_failure: true
+    communication_loss: true
+
+  actions:
+    latch_simulated_stop: true
+    inhibit_simulated_motion: true
+    generate_critical_alert: true
+    record_safety_incident: true
+    require_manual_review: true
+
+  automatic_reset_enabled: false
+  manual_reset_review_required: true
+
+risk_assessment:
+  enabled: true
+
+  levels:
+    - low
+    - medium
+    - high
+    - critical
+
+  thresholds:
+    low_max: 0.25
+    medium_max: 0.50
+    high_max: 0.75
+    critical_max: 1.0
+
+  monitor:
+    - collision_risk
+    - human_proximity_risk
+    - motor_failure_risk
+    - joint_failure_risk
+    - battery_risk
+    - thermal_risk
+    - sensor_failure_risk
+    - communication_risk
+
+hardware_restrictions:
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  robot_driver_enabled: false
+  remote_motion_commands_enabled: false
+  autonomous_physical_execution_enabled: false
+  emergency_stop_reset_enabled: false
+
+monitoring:
+  enabled: true
+  record_safety_violations: true
+  record_emergency_stops: true
+  record_collision_warnings: true
+  record_human_proximity_events: true
+  record_limit_violations: true
+
+logging:
+  enabled: true
+  level: INFO
+  audit_logging: true
+  output: "reports/safety_limits.json"

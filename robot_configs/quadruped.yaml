@@ -1,0 +1,322 @@
+
+version: "1.0.0"
+
+robot:
+  id: "QUADRUPED_001"
+  name: "Physical AI Quadruped Robot"
+  type: quadruped
+  enabled: true
+  mode: simulation
+
+  physical_properties:
+    mass_kg: 30.0
+    length_m: 0.8
+    width_m: 0.4
+    height_m: 0.55
+    degrees_of_freedom: 12
+    number_of_legs: 4
+
+  initial_pose:
+    x: 0.0
+    y: 0.0
+    z: 0.45
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
+joints:
+  enabled: true
+  control_mode: position
+
+  groups:
+    front_left:
+      - fl_hip
+      - fl_thigh
+      - fl_calf
+
+    front_right:
+      - fr_hip
+      - fr_thigh
+      - fr_calf
+
+    rear_left:
+      - rl_hip
+      - rl_thigh
+      - rl_calf
+
+    rear_right:
+      - rr_hip
+      - rr_thigh
+      - rr_calf
+
+  limits:
+    max_velocity_rad_s: 2.0
+    max_acceleration_rad_s2: 4.0
+    max_torque_nm: 80
+
+controllers:
+  enabled: true
+  main_controller: quadruped_controller
+
+  joint_controller:
+    enabled: true
+    type: joint_trajectory
+    update_rate_hz: 200
+
+  locomotion_controller:
+    enabled: true
+    type: legged_locomotion
+    control_mode: velocity
+
+  balance_controller:
+    enabled: true
+    body_stabilization: true
+    center_of_mass_control: true
+    posture_correction: true
+    fall_detection: true
+
+  foot_controller:
+    enabled: true
+    foot_trajectory_planning: true
+    ground_contact_detection: true
+    slip_detection: true
+
+locomotion:
+  enabled: true
+
+  default_gait: trot
+
+  supported_gaits:
+    - stand
+    - walk
+    - trot
+    - crawl
+    - pace
+
+  gait_parameters:
+    step_length_m: 0.25
+    step_height_m: 0.08
+    step_frequency_hz: 2.0
+    duty_factor: 0.6
+
+  movement_limits:
+    max_forward_speed_mps: 1.5
+    max_lateral_speed_mps: 0.5
+    max_turn_rate_rad_s: 1.0
+    max_slope_deg: 15
+
+  features:
+    dynamic_balance: true
+    terrain_adaptation: true
+    obstacle_avoidance: true
+    gait_switching: true
+    slip_detection: true
+    fall_risk_prediction: true
+
+sensors:
+  enabled: true
+
+  rgb_camera:
+    enabled: true
+    resolution: [1280, 720]
+    fps: 30
+
+  depth_camera:
+    enabled: true
+    range_m: 10.0
+    fps: 30
+
+  lidar:
+    enabled: true
+    range_m: 30.0
+    field_of_view_deg: 360
+    update_rate_hz: 10
+
+  imu:
+    enabled: true
+    update_rate_hz: 200
+
+  joint_encoders:
+    enabled: true
+    update_rate_hz: 200
+
+  foot_contact_sensors:
+    enabled: true
+    update_rate_hz: 200
+
+  temperature_sensors:
+    enabled: true
+
+  gps:
+    enabled: false
+    update_rate_hz: 1
+
+perception:
+  enabled: true
+  object_detection: true
+  object_tracking: true
+  human_detection: true
+  depth_estimation: true
+  terrain_classification: true
+  obstacle_detection: true
+  semantic_segmentation: true
+  sensor_fusion: true
+
+navigation:
+  enabled: true
+
+  localization:
+    enabled: true
+    algorithm: ekf
+
+  mapping:
+    enabled: true
+    algorithm: lidar_slam
+
+  path_planning:
+    enabled: true
+    global_planner: astar
+    local_planner: dwa
+
+  obstacle_avoidance:
+    enabled: true
+    warning_distance_m: 2.0
+    critical_distance_m: 0.7
+
+  terrain_navigation:
+    enabled: true
+    uneven_terrain: true
+    slope_detection: true
+    traversability_analysis: true
+
+battery:
+  enabled: true
+  nominal_voltage_v: 48.0
+  capacity_ah: 20.0
+  initial_soc_percent: 100
+
+  monitoring:
+    voltage: true
+    current: true
+    temperature: true
+    state_of_health: true
+    charge_cycles: true
+
+  thresholds:
+    soc_warning_percent: 15
+    soc_critical_percent: 5
+    temperature_warning_c: 48
+    temperature_critical_c: 65
+
+ai:
+  enabled: true
+
+  models:
+    anomaly_detection: true
+    failure_prediction: true
+    rul_prediction: true
+    terrain_classification: true
+    reinforcement_learning: true
+    vision_language_model: true
+    vision_language_action: true
+    world_model: true
+
+  agents:
+    task_planning: true
+    navigation: true
+    locomotion: true
+    perception: true
+    maintenance: true
+    safety: true
+
+  rag:
+    enabled: true
+    robot_manual_retrieval: true
+    maintenance_knowledge: true
+    troubleshooting: true
+
+predictive_maintenance:
+  enabled: true
+  motor_health: true
+  joint_health: true
+  actuator_health: true
+  battery_health: true
+  sensor_health: true
+  anomaly_detection: true
+  failure_prediction: true
+  remaining_useful_life_prediction: true
+  maintenance_recommendations: true
+
+health_monitoring:
+  enabled: true
+  interval_seconds: 5
+
+  metrics:
+    - robot_health_score
+    - motor_temperature
+    - motor_current
+    - motor_vibration
+    - joint_temperature
+    - joint_position_error
+    - actuator_health
+    - battery_soc
+    - sensor_health
+    - foot_contact_status
+    - slip_risk_score
+    - fall_risk_score
+    - failure_probability
+    - rul_hours
+
+safety:
+  enabled: true
+  simulation_only: true
+
+  collision_detection: true
+  human_proximity_detection: true
+  fall_detection: true
+  slip_detection: true
+  joint_limit_validation: true
+  trajectory_validation: true
+
+  simulated_emergency_stop: true
+  simulated_motion_inhibition: true
+  human_review_required: true
+
+  physical_robot_control_enabled: false
+  hardware_actuation_enabled: false
+  remote_motion_commands_enabled: false
+  autonomous_physical_execution_enabled: false
+  automatic_emergency_stop_reset_enabled: false
+
+telemetry:
+  enabled: true
+  collection_interval_ms: 1000
+  websocket_endpoint: "/ws/telemetry"
+  save_to_database: true
+  save_to_csv: true
+  save_to_json: true
+
+simulation:
+  enabled: true
+  engine: mujoco
+  time_step_seconds: 0.002
+  duration_seconds: 300
+  random_seed: 42
+
+  scenarios:
+    - standing
+    - walking
+    - trotting
+    - terrain_navigation
+    - obstacle_avoidance
+    - slope_navigation
+    - motor_failure
+    - joint_failure
+    - sensor_failure
+    - overheating
+    - emergency
+
+logging:
+  enabled: true
+  level: INFO
+  output: "reports/quadruped_robot.json"

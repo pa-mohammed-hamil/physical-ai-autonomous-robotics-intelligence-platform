@@ -1,0 +1,4 @@
+name: navigation
+mode: simulation_only
+enabled: false
+description: "Example navigation scenario; configure simulator assets before enabling."

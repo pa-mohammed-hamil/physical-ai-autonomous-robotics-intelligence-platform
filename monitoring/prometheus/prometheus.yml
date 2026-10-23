@@ -1,0 +1,106 @@
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+  external_labels:
+    application: physical-ai-robotics
+    environment: development
+    mode: simulation
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - "localhost:9090"
+
+  - job_name: fastapi_backend
+    metrics_path: /metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+          - "backend:8000"
+        labels:
+          service: backend
+          component: api
+
+  - job_name: ml_model_server
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - "model-server:8001"
+        labels:
+          service: machine_learning
+          component: inference
+
+  - job_name: robot_health
+    metrics_path: /metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - "robot-health-exporter:9101"
+        labels:
+          service: robotics
+          component: robot_health
+
+  - job_name: fleet_monitoring
+    metrics_path: /metrics
+    scrape_interval: 10s
+    static_configs:
+      - targets:
+          - "fleet-exporter:9102"
+        labels:
+          service: robotics
+          component: fleet_health
+
+  - job_name: telemetry
+    metrics_path: /metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - "telemetry-exporter:9103"
+        labels:
+          service: robotics
+          component: telemetry
+
+  - job_name: predictive_maintenance
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - "maintenance-exporter:9104"
+        labels:
+          service: machine_learning
+          component: predictive_maintenance
+
+  - job_name: safety_monitor
+    metrics_path: /metrics
+    scrape_interval: 5s
+    static_configs:
+      - targets:
+          - "safety-exporter:9105"
+        labels:
+          service: robotics
+          component: safety
+
+  - job_name: node_exporter
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - "node-exporter:9100"
+        labels:
+          component: infrastructure
+
+  - job_name: cadvisor
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - "cadvisor:8080"
+        labels:
+          component: containers
