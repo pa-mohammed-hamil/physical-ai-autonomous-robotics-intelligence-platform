@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Robot Viewer | Real-Time Visualization</title>
+    <script src="/js/navigation.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0e1a;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 30px;
+            background: linear-gradient(180deg, rgba(10, 14, 26, 0.95) 0%, rgba(10, 14, 26, 0) 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: absolute;
+            left: 20px;
+            top: 100px;
+            width: 280px;
+            background: rgba(10, 14, 26, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            z-index: 10;
+        }
+
+        .panel-section {
+            margin-bottom: 24px;
+        }
+
+        .panel-section h3 {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+        }
+
+        .value-display {
+            float: right;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .control-btn {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .control-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+
+        /* Telemetry Panel */
+        .telemetry-panel {
+            position: absolute;
+            right: 20px;
+            top: 100px;
+            width: 300px;
+            background: rgba(10, 14, 26, 0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            z-index: 10;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .telemetry-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+
+        .telemetry-label {
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .telemetry-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.online {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            background: rgba(10, 14, 26, 0.95);
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .view-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0e1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(102, 126, 234, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: #888;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .control-panel,
+            .telemetry-panel {
+                width: 240px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading 3D Robot Model...</div>
+        </div>
+
+        <!-- Canvas -->
+        <div id="canvas-container"></div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <div class="logo-text">
+                    <h1>3D Robot Viewer</h1>
+                    <p>Real-Time Visualization</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn" onclick="resetView()">🔄 Reset View</button>
+                <button class="btn" onclick="toggleAnimation()">⏯️ Animation</button>
+                <button class="btn btn-primary" onclick="takeScreenshot()">📷 Screenshot</button>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="panel-section">
+                <h3>🎮 Robot Controls</h3>
+                
+                <div class="control-group">
+                    <label>Base Rotation <span class="value-display" id="baseValue">0°</span></label>
+                    <input type="range" class="slider" id="baseRotation" min="-180" max="180" value="0" oninput="updateJoint('base', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <label>Shoulder <span class="value-display" id="shoulderValue">45°</span></label>
+                    <input type="range" class="slider" id="shoulderJoint" min="-90" max="90" value="45" oninput="updateJoint('shoulder', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <label>Elbow <span class="value-display" id="elbowValue">-45°</span></label>
+                    <input type="range" class="slider" id="elbowJoint" min="-120" max="120" value="-45" oninput="updateJoint('elbow', this.value)">
+                </div>
+
+                <div class="control-group">
+                    <label>Wrist <span class="value-display" id="wristValue">0°</span></label>
+                    <input type="range" class="slider" id="wristJoint" min="-180" max="180" value="0" oninput="updateJoint('wrist', this.value)">
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>🎨 Visualization</h3>
+                <div class="button-group">
+                    <button class="control-btn active" onclick="toggleMode('solid')">Solid</button>
+                    <button class="control-btn" onclick="toggleMode('wireframe')">Wireframe</button>
+                    <button class="control-btn" onclick="toggleGrid()">Grid</button>
+                    <button class="control-btn" onclick="toggleAxes()">Axes</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>⚙️ Settings</h3>
+                <div class="control-group">
+                    <label>Animation Speed <span class="value-display" id="speedValue">1.0x</span></label>
+                    <input type="range" class="slider" id="animSpeed" min="0" max="2" step="0.1" value="1" oninput="updateSpeed(this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Telemetry Panel -->
+        <div class="telemetry-panel">
+            <div class="panel-section">
+                <h3>📊 Robot Status</h3>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">Status</span>
+                    <span class="status-badge online">Online</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">Battery</span>
+                    <span class="telemetry-value">87%</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">Temperature</span>
+                    <span class="telemetry-value">42°C</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">Load</span>
+                    <span class="telemetry-value">2.3 kg</span>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>📍 Position</h3>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">X</span>
+                    <span class="telemetry-value" id="posX">0.00 m</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">Y</span>
+                    <span class="telemetry-value" id="posY">0.50 m</span>
+                </div>
+                <div class="telemetry-item">
+                    <span class="telemetry-label">Z</span>
+                    <span class="telemetry-value" id="posZ">0.30 m</span>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>⚡ Performance</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="fps">60</div>
+                        <div class="stat-label">FPS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="triangles">12K</div>
+                        <div class="stat-label">Triangles</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <button class="view-btn active" onclick="setView('perspective')" title="Perspective View">👁️</button>
+            <button class="view-btn" onclick="setView('top')" title="Top View">⬆️</button>
+            <button class="view-btn" onclick="setView('front')" title="Front View">◀️</button>
+            <button class="view-btn" onclick="setView('side')" title="Side View">↔️</button>
+            <button class="view-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
+        </div>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // Scene Setup
+        let scene, camera, renderer, controls;
+        let robot, grid, axes;
+        let animationSpeed = 1.0;
+        let isAnimating = false;
+
+        // Joint references
+        let baseJoint, shoulderJoint, elbowJoint, wristJoint, gripper;
+
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0e1a);
+            scene.fog = new THREE.Fog(0x0a0e1a, 10, 50);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(
+                75,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                1000
+            );
+            camera.position.set(5, 5, 5);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 2;
+            controls.maxDistance = 20;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 5);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+
+            const spotLight = new THREE.SpotLight(0x667eea, 0.5);
+            spotLight.position.set(-5, 8, -5);
+            scene.add(spotLight);
+
+            // Grid
+            grid = new THREE.GridHelper(20, 20, 0x667eea, 0x333333);
+            scene.add(grid);
+
+            // Axes
+            axes = new THREE.AxesHelper(5);
+            scene.add(axes);
+
+            // Create Robot
+            createRobot();
+
+            // Handle resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1000);
+
+            // Start animation
+            animate();
+        }
+
+        function createRobot() {
+            robot = new THREE.Group();
+
+            // Materials
+            const bodyMaterial = new THREE.MeshStandardMaterial({
+                color: 0x667eea,
+                metalness: 0.7,
+                roughness: 0.3
+            });
+
+            const jointMaterial = new THREE.MeshStandardMaterial({
+                color: 0x764ba2,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+
+            // Base
+            const baseGeometry = new THREE.CylinderGeometry(0.8, 1.0, 0.5, 32);
+            const base = new THREE.Mesh(baseGeometry, bodyMaterial);
+            base.castShadow = true;
+            base.receiveShadow = true;
+            base.position.y = 0.25;
+            robot.add(base);
+
+            // Base Joint (rotates around Y)
+            baseJoint = new THREE.Group();
+            baseJoint.position.y = 0.5;
+            robot.add(baseJoint);
+
+            // Lower Arm
+            const lowerArmGeometry = new THREE.BoxGeometry(0.3, 2, 0.3);
+            const lowerArm = new THREE.Mesh(lowerArmGeometry, bodyMaterial);
+            lowerArm.castShadow = true;
+            lowerArm.position.y = 1;
+            baseJoint.add(lowerArm);
+
+            // Shoulder Joint
+            shoulderJoint = new THREE.Group();
+            shoulderJoint.position.y = 2;
+            baseJoint.add(shoulderJoint);
+
+            const shoulderSphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.25, 32, 32),
+                jointMaterial
+            );
+            shoulderSphere.castShadow = true;
+            shoulderJoint.add(shoulderSphere);
+
+            // Upper Arm
+            const upperArmGeometry = new THREE.BoxGeometry(0.25, 1.5, 0.25);
+            const upperArm = new THREE.Mesh(upperArmGeometry, bodyMaterial);
+            upperArm.castShadow = true;
+            upperArm.position.y = 0.75;
+            shoulderJoint.add(upperArm);
+
+            // Elbow Joint
+            elbowJoint = new THREE.Group();
+            elbowJoint.position.y = 1.5;
+            shoulderJoint.add(elbowJoint);
+
+            const elbowSphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.2, 32, 32),
+                jointMaterial
+            );
+            elbowSphere.castShadow = true;
+            elbowJoint.add(elbowSphere);
+
+            // Forearm
+            const forearmGeometry = new THREE.BoxGeometry(0.2, 1.2, 0.2);
+            const forearm = new THREE.Mesh(forearmGeometry, bodyMaterial);
+            forearm.castShadow = true;
+            forearm.position.y = 0.6;
+            elbowJoint.add(forearm);
+
+            // Wrist Joint
+            wristJoint = new THREE.Group();
+            wristJoint.position.y = 1.2;
+            elbowJoint.add(wristJoint);
+
+            const wristSphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.15, 32, 32),
+                jointMaterial
+            );
+            wristSphere.castShadow = true;
+            wristJoint.add(wristSphere);
+
+            // Gripper
+            gripper = new THREE.Group();
+            gripper.position.y = 0.3;
+            wristJoint.add(gripper);
+
+            const gripperBase = new THREE.Mesh(
+                new THREE.BoxGeometry(0.3, 0.2, 0.2),
+                jointMaterial
+            );
+            gripperBase.castShadow = true;
+            gripper.add(gripperBase);
+
+            // Gripper fingers
+            const fingerGeometry = new THREE.BoxGeometry(0.05, 0.3, 0.05);
+            const finger1 = new THREE.Mesh(fingerGeometry, bodyMaterial);
+            finger1.position.set(-0.1, 0.15, 0);
+            finger1.castShadow = true;
+            gripper.add(finger1);
+
+            const finger2 = new THREE.Mesh(fingerGeometry, bodyMaterial);
+            finger2.position.set(0.1, 0.15, 0);
+            finger2.castShadow = true;
+            gripper.add(finger2);
+
+            scene.add(robot);
+
+            // Set initial pose
+            shoulderJoint.rotation.z = THREE.Math.degToRad(45);
+            elbowJoint.rotation.z = THREE.Math.degToRad(-45);
+        }
+
+        function updateJoint(joint, value) {
+            const rad = THREE.Math.degToRad(value);
+            
+            switch(joint) {
+                case 'base':
+                    baseJoint.rotation.y = rad;
+                    document.getElementById('baseValue').textContent = value + '°';
+                    break;
+                case 'shoulder':
+                    shoulderJoint.rotation.z = rad;
+                    document.getElementById('shoulderValue').textContent = value + '°';
+                    break;
+                case 'elbow':
+                    elbowJoint.rotation.z = rad;
+                    document.getElementById('elbowValue').textContent = value + '°';
+                    break;
+                case 'wrist':
+                    wristJoint.rotation.y = rad;
+                    document.getElementById('wristValue').textContent = value + '°';
+                    break;
+            }
+
+            // Update end effector position
+            updateTelemetry();
+        }
+
+        function updateTelemetry() {
+            // Get gripper world position
+            const gripperPos = new THREE.Vector3();
+            gripper.getWorldPosition(gripperPos);
+
+            document.getElementById('posX').textContent = gripperPos.x.toFixed(2) + ' m';
+            document.getElementById('posY').textContent = gripperPos.y.toFixed(2) + ' m';
+            document.getElementById('posZ').textContent = gripperPos.z.toFixed(2) + ' m';
+        }
+
+        function toggleMode(mode) {
+            document.querySelectorAll('.button-group .control-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            robot.traverse((child) => {
+                if (child.isMesh) {
+                    child.material.wireframe = mode === 'wireframe';
+                }
+            });
+        }
+
+        function toggleGrid() {
+            grid.visible = !grid.visible;
+        }
+
+        function toggleAxes() {
+            axes.visible = !axes.visible;
+        }
+
+        function updateSpeed(value) {
+            animationSpeed = parseFloat(value);
+            document.getElementById('speedValue').textContent = value + 'x';
+        }
+
+        function setView(view) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            switch(view) {
+                case 'perspective':
+                    camera.position.set(5, 5, 5);
+                    break;
+                case 'top':
+                    camera.position.set(0, 10, 0);
+                    break;
+                case 'front':
+                    camera.position.set(0, 3, 8);
+                    break;
+                case 'side':
+                    camera.position.set(8, 3, 0);
+                    break;
+            }
+            camera.lookAt(0, 2, 0);
+        }
+
+        function resetView() {
+            // Reset camera
+            camera.position.set(5, 5, 5);
+            camera.lookAt(0, 2, 0);
+            controls.target.set(0, 2, 0);
+            controls.update();
+
+            // Reset joints
+            document.getElementById('baseRotation').value = 0;
+            document.getElementById('shoulderJoint').value = 45;
+            document.getElementById('elbowJoint').value = -45;
+            document.getElementById('wristJoint').value = 0;
+
+            updateJoint('base', 0);
+            updateJoint('shoulder', 45);
+            updateJoint('elbow', -45);
+            updateJoint('wrist', 0);
+        }
+
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+        }
+
+        function takeScreenshot() {
+            renderer.render(scene, camera);
+            const screenshot = renderer.domElement.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = 'robot-screenshot.png';
+            link.href = screenshot;
+            link.click();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        let lastTime = 0;
+        let frameCount = 0;
+        let fpsTime = 0;
+
+        function animate(currentTime = 0) {
+            requestAnimationFrame(animate);
+
+            const delta = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            // Update FPS
+            frameCount++;
+            fpsTime += delta;
+            if (fpsTime >= 1.0) {
+                document.getElementById('fps').textContent = frameCount;
+                frameCount = 0;
+                fpsTime = 0;
+            }
+
+            // Auto-rotate animation
+            if (isAnimating) {
+                baseJoint.rotation.y += 0.01 * animationSpeed;
+                shoulderJoint.rotation.z = Math.sin(currentTime * 0.001 * animationSpeed) * 0.5 + 0.5;
+                elbowJoint.rotation.z = Math.cos(currentTime * 0.001 * animationSpeed) * 0.5 - 0.5;
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

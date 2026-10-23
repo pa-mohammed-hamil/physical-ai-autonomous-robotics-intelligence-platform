@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR/VR Robot Monitoring - Physical AI Platform</title>
+    <script src="/js/navigation.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vr-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            position: relative;
+        }
+
+        /* 3D Viewport */
+        #viewport {
+            flex: 1;
+            position: relative;
+            background: radial-gradient(circle at center, #1a1a2e, #0f0f1e);
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Side Panel */
+        .side-panel {
+            width: 350px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .panel-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-section h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Session Info */
+        .session-info {
+            background: rgba(167, 139, 250, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #94a3b8;
+        }
+
+        .info-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Controls */
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #94a3b8;
+        }
+
+        .control-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .control-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+        }
+
+        .control-button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .control-button.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        /* Robot List */
+        .robot-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .robot-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .robot-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .robot-item.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border: 1px solid #667eea;
+        }
+
+        .robot-name {
+            font-weight: 600;
+        }
+
+        .robot-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        /* Performance Stats */
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4ade80;
+        }
+
+        .stat-value.warning {
+            color: #fbbf24;
+        }
+
+        .stat-value.danger {
+            color: #ef4444;
+        }
+
+        /* VR Controls Overlay */
+        .vr-overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-radius: 15px;
+            display: flex;
+            gap: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .vr-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .vr-control:hover {
+            transform: translateY(-5px);
+        }
+
+        .vr-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .vr-label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4ade80;
+            min-width: 300px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast.warning {
+            border-left-color: #fbbf24;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Gesture Indicators */
+        .gesture-indicator {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 200px;
+        }
+
+        .gesture-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .gesture-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .side-panel {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .side-panel {
+                position: absolute;
+                right: -350px;
+                height: 100%;
+                transition: right 0.3s;
+                z-index: 10;
+            }
+
+            .side-panel.open {
+                right: 0;
+            }
+
+            .vr-overlay {
+                flex-wrap: wrap;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                🥽 AR/VR Robot Monitoring
+                <span class="vr-badge">WebXR</span>
+            </h1>
+            <div class="header-controls">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="connection-status">Connected</span>
+                </div>
+                <button class="control-button" id="enter-vr-btn" style="width: auto; padding: 10px 20px;">
+                    Enter VR
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- 3D Viewport -->
+            <div id="viewport">
+                <div id="canvas-container">
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <div>Initializing AR/VR Session...</div>
+                    </div>
+                </div>
+
+                <!-- Gesture Indicator -->
+                <div class="gesture-indicator" id="gesture-indicator" style="display: none;">
+                    <h4 style="margin-bottom: 10px;">Hand Gestures</h4>
+                    <div class="gesture-item">
+                        <div class="gesture-icon">👆</div>
+                        <span>Point to Select</span>
+                    </div>
+                    <div class="gesture-item">
+                        <div class="gesture-icon">✊</div>
+                        <span>Grab to Move</span>
+                    </div>
+                    <div class="gesture-item">
+                        <div class="gesture-icon">🤏</div>
+                        <span>Pinch to Scale</span>
+                    </div>
+                </div>
+
+                <!-- VR Controls Overlay -->
+                <div class="vr-overlay">
+                    <div class="vr-control" onclick="changeViewMode('first_person')">
+                        <div class="vr-icon">👁️</div>
+                        <div class="vr-label">First Person</div>
+                    </div>
+                    <div class="vr-control" onclick="changeViewMode('third_person')">
+                        <div class="vr-icon">📷</div>
+                        <div class="vr-label">Third Person</div>
+                    </div>
+                    <div class="vr-control" onclick="changeViewMode('god_mode')">
+                        <div class="vr-icon">🌐</div>
+                        <div class="vr-label">God Mode</div>
+                    </div>
+                    <div class="vr-control" onclick="createSpatialAnchor()">
+                        <div class="vr-icon">📍</div>
+                        <div class="vr-label">Pin Location</div>
+                    </div>
+                    <div class="vr-control" onclick="toggleHolographicOverlay()">
+                        <div class="vr-icon">✨</div>
+                        <div class="vr-label">Hologram</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <!-- Session Info -->
+                <div class="panel-section">
+                    <h3>🎮 Session Info</h3>
+                    <div class="session-info">
+                        <div class="info-row">
+                            <span class="info-label">Session ID:</span>
+                            <span class="info-value" id="session-id">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Device Type:</span>
+                            <span class="info-value" id="device-type">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">View Mode:</span>
+                            <span class="info-value" id="view-mode">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Quality:</span>
+                            <span class="info-value" id="quality-level">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Selection -->
+                <div class="panel-section">
+                    <h3>🥽 Device Setup</h3>
+                    <div class="control-group">
+                        <label>Device Type</label>
+                        <select id="device-select">
+                            <option value="web_xr">WebXR Browser</option>
+                            <option value="vr_headset">VR Headset</option>
+                            <option value="ar_phone">AR Phone</option>
+                            <option value="ar_glasses">AR Glasses</option>
+                            <option value="mixed_reality">Mixed Reality</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Interaction Mode</label>
+                        <select id="interaction-select">
+                            <option value="controller">Controller</option>
+                            <option value="hand_tracking">Hand Tracking</option>
+                            <option value="gaze">Gaze</option>
+                            <option value="voice">Voice</option>
+                            <option value="gesture">Gesture</option>
+                        </select>
+                    </div>
+                    <button class="control-button" onclick="createSession()">
+                        Initialize Session
+                    </button>
+                </div>
+
+                <!-- Robot Selection -->
+                <div class="panel-section">
+                    <h3>🤖 Connect Robots</h3>
+                    <div class="control-group">
+                        <input type="text" id="robot-id-input" placeholder="Enter Robot ID (e.g., ROBOT_001)">
+                        <button class="control-button secondary" onclick="connectRobot()">
+                            Connect Robot
+                        </button>
+                    </div>
+                    <div class="robot-list" id="robot-list">
+                        <!-- Robot items will be added here -->
+                    </div>
+                </div>
+
+                <!-- VR Environment -->
+                <div class="panel-section">
+                    <h3>🌍 Environment</h3>
+                    <div class="control-group">
+                        <label>VR Scene</label>
+                        <select id="environment-select" onchange="loadEnvironment()">
+                            <option value="warehouse_day">Warehouse (Day)</option>
+                            <option value="factory_night">Factory (Night)</option>
+                            <option value="outdoor_sunny">Outdoor (Sunny)</option>
+                            <option value="space_station">Space Station</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Performance Stats -->
+                <div class="panel-section">
+                    <h3>📊 Performance</h3>
+                    <div class="stat-card">
+                        <div class="stat-label">Frame Rate</div>
+                        <div class="stat-value" id="fps-stat">0 FPS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Latency</div>
+                        <div class="stat-value" id="latency-stat">0 ms</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Connected Robots</div>
+                        <div class="stat-value" id="robots-stat">0</div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="panel-section">
+                    <button class="control-button secondary" onclick="toggleGestureIndicator()">
+                        Toggle Gesture Guide
+                    </button>
+                    <button class="control-button secondary" onclick="resetView()">
+                        Reset View
+                    </button>
+                    <button class="control-button danger" onclick="closeSession()">
+                        Close Session
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://localhost:8000/api/v1';
+        
+        // State
+        let sessionId = null;
+        let websocket = null;
+        let connectedRobots = [];
+        let performanceStats = {
+            fps: 0,
+            latency: 0,
+            frameTime: 0
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('AR/VR Viewer initialized');
+            loadAvailableEnvironments();
+        });
+
+        // Create Session
+        async function createSession() {
+            try {
+                const deviceType = document.getElementById('device-select').value;
+                const interactionMode = document.getElementById('interaction-select').value;
+
+                const response = await fetch(`${API_BASE_URL}/ar-vr/session`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: `user_${Date.now()}`,
+                        device_type: deviceType,
+                        view_mode: 'third_person',
+                        interaction_mode: interactionMode
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to create session');
+
+                const data = await response.json();
+                sessionId = data.session_id;
+
+                // Update UI
+                document.getElementById('session-id').textContent = sessionId.substring(0, 12) + '...';
+                document.getElementById('device-type').textContent = data.device_type.replace('_', ' ').toUpperCase();
+                document.getElementById('view-mode').textContent = data.view_mode.replace('_', ' ').toUpperCase();
+
+                // Connect WebSocket
+                connectWebSocket();
+
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+
+                showToast('Session created successfully!', 'success');
+            } catch (error) {
+                console.error('Error creating session:', error);
+                showToast('Failed to create session', 'error');
+            }
+        }
+
+        // Connect WebSocket
+        function connectWebSocket() {
+            if (!sessionId) return;
+
+            const wsUrl = `ws://localhost:8000/api/v1/ar-vr/session/${sessionId}/stream`;
+            websocket = new WebSocket(wsUrl);
+
+            websocket.onopen = () => {
+                console.log('WebSocket connected');
+                document.getElementById('connection-status').textContent = 'Connected';
+                showToast('Real-time streaming started', 'success');
+            };
+
+            websocket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                
+                if (message.type === 'init') {
+                    handleInitData(message.data);
+                } else if (message.type === 'update') {
+                    handleUpdateData(message);
+                }
+            };
+
+            websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                document.getElementById('connection-status').textContent = 'Error';
+                showToast('Connection error', 'error');
+            };
+
+            websocket.onclose = () => {
+                console.log('WebSocket closed');
+                document.getElementById('connection-status').textContent = 'Disconnected';
+                showToast('Connection closed', 'warning');
+            };
+
+            // Start sending performance metrics
+            startPerformanceMonitoring();
+        }
+
+        // Handle WebSocket Data
+        function handleInitData(data) {
+            console.log('Initial data received:', data);
+            updateUI(data);
+        }
+
+        function handleUpdateData(message) {
+            if (message.render_data) {
+                updateUI(message.render_data);
+            }
+
+            if (message.haptic_feedback && message.haptic_feedback.length > 0) {
+                // Handle haptic feedback (would trigger actual device feedback in real implementation)
+                console.log('Haptic feedback:', message.haptic_feedback);
+            }
+        }
+
+        // Update UI
+        function updateUI(data) {
+            if (data.view_mode) {
+                document.getElementById('view-mode').textContent = data.view_mode.replace('_', ' ').toUpperCase();
+            }
+
+            if (data.quality_level) {
+                document.getElementById('quality-level').textContent = data.quality_level.toUpperCase();
+            }
+
+            if (data.connected_robots) {
+                document.getElementById('robots-stat').textContent = data.connected_robots.length;
+                updateRobotList(data.connected_robots);
+            }
+        }
+
+        // Connect Robot
+        async function connectRobot() {
+            if (!sessionId) {
+                showToast('Please create a session first', 'warning');
+                return;
+            }
+
+            const robotId = document.getElementById('robot-id-input').value.trim();
+            if (!robotId) {
+                showToast('Please enter a robot ID', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/ar-vr/session/${sessionId}/robot`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        robot_id: robotId
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to connect robot');
+
+                connectedRobots.push(robotId);
+                updateRobotList(connectedRobots);
+                document.getElementById('robot-id-input').value = '';
+
+                showToast(`Robot ${robotId} connected!`, 'success');
+            } catch (error) {
+                console.error('Error connecting robot:', error);
+                showToast('Failed to connect robot', 'error');
+            }
+        }
+
+        // Update Robot List
+        function updateRobotList(robots) {
+            const robotList = document.getElementById('robot-list');
+            robotList.innerHTML = '';
+
+            robots.forEach((robotId, index) => {
+                const robotItem = document.createElement('div');
+                robotItem.className = 'robot-item active';
+                robotItem.innerHTML = `
+                    <span class="robot-name">${robotId}</span>
+                    <span class="robot-status">Active</span>
+                `;
+                robotItem.onclick = () => focusRobot(robotId);
+                robotList.appendChild(robotItem);
+            });
+        }
+
+        // Change View Mode
+        async function changeViewMode(viewMode) {
+            if (!sessionId) {
+                showToast('Please create a session first', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/ar-vr/session/${sessionId}/view-mode`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        view_mode: viewMode
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to change view mode');
+
+                showToast(`Switched to ${viewMode.replace('_', ' ')} view`, 'success');
+            } catch (error) {
+                console.error('Error changing view mode:', error);
+                showToast('Failed to change view mode', 'error');
+            }
+        }
+
+        // Create Spatial Anchor
+        async function createSpatialAnchor() {
+            if (!sessionId) {
+                showToast('Please create a session first', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/ar-vr/session/${sessionId}/spatial-anchor`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        position: { x: Math.random() * 10 - 5, y: 0, z: Math.random() * 10 - 5 },
+                        rotation: { w: 1, x: 0, y: 0, z: 0 },
+                        content_type: 'marker',
+                        content_data: { label: 'Waypoint', timestamp: new Date().toISOString() },
+                        persistent: true
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to create anchor');
+
+                showToast('Spatial anchor created!', 'success');
+            } catch (error) {
+                console.error('Error creating spatial anchor:', error);
+                showToast('Failed to create spatial anchor', 'error');
+            }
+        }
+
+        // Toggle Holographic Overlay
+        async function toggleHolographicOverlay() {
+            if (!sessionId) {
+                showToast('Please create a session first', 'warning');
+                return;
+            }
+
+            if (connectedRobots.length === 0) {
+                showToast('Please connect a robot first', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/ar-vr/session/${sessionId}/holographic-overlay`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        robot_id: connectedRobots[0],
+                        overlay_type: 'health',
+                        position: { x: 0, y: 2, z: 0 },
+                        data: { health: 85, battery: 70, status: 'operational' },
+                        anchor_to_robot: true
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to create overlay');
+
+                showToast('Holographic overlay activated!', 'success');
+            } catch (error) {
+                console.error('Error creating holographic overlay:', error);
+                showToast('Failed to create holographic overlay', 'error');
+            }
+        }
+
+        // Load Environments
+        async function loadAvailableEnvironments() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/ar-vr/environments`);
+                if (!response.ok) throw new Error('Failed to load environments');
+
+                const data = await response.json();
+                const select = document.getElementById('environment-select');
+                select.innerHTML = '';
+
+                data.environments.forEach(env => {
+                    const option = document.createElement('option');
+                    option.value = env.environment_id;
+                    option.textContent = `${env.scene_type.replace('_', ' ')} (${env.lighting})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading environments:', error);
+            }
+        }
+
+        // Load Environment
+        function loadEnvironment() {
+            const environmentId = document.getElementById('environment-select').value;
+            console.log('Loading environment:', environmentId);
+            showToast(`Loaded ${environmentId.replace('_', ' ')} environment`, 'success');
+        }
+
+        // Performance Monitoring
+        function startPerformanceMonitoring() {
+            let lastFrameTime = Date.now();
+            let frameCount = 0;
+            let fpsUpdateTime = Date.now();
+
+            setInterval(() => {
+                if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
+
+                const currentTime = Date.now();
+                const frameTime = currentTime - lastFrameTime;
+                lastFrameTime = currentTime;
+
+                frameCount++;
+
+                // Update FPS every second
+                if (currentTime - fpsUpdateTime >= 1000) {
+                    performanceStats.fps = frameCount;
+                    performanceStats.frameTime = frameTime;
+                    frameCount = 0;
+                    fpsUpdateTime = currentTime;
+
+                    // Update UI
+                    const fpsElement = document.getElementById('fps-stat');
+                    fpsElement.textContent = `${performanceStats.fps} FPS`;
+                    fpsElement.className = 'stat-value';
+                    if (performanceStats.fps < 30) fpsElement.className += ' danger';
+                    else if (performanceStats.fps < 60) fpsElement.className += ' warning';
+
+                    document.getElementById('latency-stat').textContent = `${performanceStats.latency.toFixed(0)} ms`;
+                }
+
+                // Send performance metrics
+                websocket.send(JSON.stringify({
+                    type: 'performance',
+                    frame_time_ms: frameTime,
+                    latency_ms: performanceStats.latency
+                }));
+
+            }, 16); // ~60 FPS
+        }
+
+        // Focus Robot
+        function focusRobot(robotId) {
+            console.log('Focusing on robot:', robotId);
+            showToast(`Focused on ${robotId}`, 'success');
+        }
+
+        // Toggle Gesture Indicator
+        function toggleGestureIndicator() {
+            const indicator = document.getElementById('gesture-indicator');
+            indicator.style.display = indicator.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Reset View
+        function resetView() {
+            console.log('Resetting view');
+            showToast('View reset', 'success');
+        }
+
+        // Close Session
+        async function closeSession() {
+            if (!sessionId) {
+                showToast('No active session', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/ar-vr/session/${sessionId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Failed to close session');
+
+                if (websocket) {
+                    websocket.close();
+                    websocket = null;
+                }
+
+                sessionId = null;
+                connectedRobots = [];
+
+                // Reset UI
+                document.getElementById('session-id').textContent = '-';
+                document.getElementById('device-type').textContent = '-';
+                document.getElementById('view-mode').textContent = '-';
+                document.getElementById('quality-level').textContent = '-';
+                document.getElementById('robots-stat').textContent = '0';
+                document.getElementById('robot-list').innerHTML = '';
+                document.getElementById('loading').style.display = 'flex';
+
+                showToast('Session closed', 'success');
+            } catch (error) {
+                console.error('Error closing session:', error);
+                showToast('Failed to close session', 'error');
+            }
+        }
+
+        // Show Toast Notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Enter VR Mode (WebXR)
+        document.getElementById('enter-vr-btn').addEventListener('click', async () => {
+            if (navigator.xr) {
+                try {
+                    const supported = await navigator.xr.isSessionSupported('immersive-vr');
+                    if (supported) {
+                        showToast('Entering VR mode...', 'success');
+                        // WebXR session would be initialized here
+                    } else {
+                        showToast('VR not supported on this device', 'warning');
+                    }
+                } catch (error) {
+                    console.error('WebXR error:', error);
+                    showToast('WebXR not available', 'error');
+                }
+            } else {
+                showToast('WebXR not supported in this browser', 'warning');
+            }
+        });
+    </script>
+</body>
+</html>

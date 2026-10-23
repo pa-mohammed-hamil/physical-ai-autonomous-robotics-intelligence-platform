@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Support Assistant | Robot Help Center</title>
+    <script src="/js/navigation.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .logo-text p {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .menu-item .icon {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .quick-actions h3 {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .action-card:hover {
+            transform: scale(1.05);
+        }
+
+        .action-card h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .action-card p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            background: white;
+            border-radius: 20px;
+            padding: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 14px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Content Area */
+        .content-area {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            padding: 24px;
+            border-bottom: 2px solid #f0f0f0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        }
+
+        .chat-header h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .chat-header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 16px 20px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: #f8f9fa;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 6px;
+            padding: 12px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chat-input {
+            padding: 24px;
+            border-top: 2px solid #f0f0f0;
+            background: #f8f9fa;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            background: white;
+            padding: 12px;
+            border-radius: 16px;
+            border: 2px solid #e0e0e0;
+            transition: border-color 0.3s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #667eea;
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            padding: 8px;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            background: #f0f0f0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .icon-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* PDF Upload Section */
+        .upload-section {
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .upload-area h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .upload-area p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .file-types {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .file-type {
+            background: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+
+        .uploaded-files {
+            margin-top: 32px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .file-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .file-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .file-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .file-info p {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Warranty Section */
+        .warranty-grid {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .warranty-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warranty-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+
+        .warranty-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .warranty-status {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .warranty-details {
+            margin-top: 20px;
+        }
+
+        .warranty-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .warranty-detail:last-child {
+            border-bottom: none;
+        }
+
+        /* Live Tracking */
+        .tracking-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            height: 100%;
+        }
+
+        #map {
+            height: 100%;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .tracking-sidebar {
+            padding: 24px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 0 20px 20px 0;
+        }
+
+        .service-status {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .status-badge.active {
+            background: #10b981;
+            color: white;
+        }
+
+        .timeline {
+            margin-top: 24px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background: #e0e0e0;
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .timeline-content h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content p {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .sidebar {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .tracking-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 400px 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .message-content {
+                max-width: 85%;
+            }
+
+            .warranty-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <div class="logo-text">
+                    <h1>Robot Assistant</h1>
+                    <p>AI-Powered Help</p>
+                </div>
+            </div>
+
+            <div class="menu-item active" data-tab="chat">
+                <span class="icon">💬</span>
+                <span>AI Chat</span>
+            </div>
+            <div class="menu-item" data-tab="upload">
+                <span class="icon">📄</span>
+                <span>Upload Documents</span>
+            </div>
+            <div class="menu-item" data-tab="warranty">
+                <span class="icon">📋</span>
+                <span>Warranty Cards</span>
+            </div>
+            <div class="menu-item" data-tab="tracking">
+                <span class="icon">📍</span>
+                <span>Live Tracking</span>
+            </div>
+
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="action-card" onclick="quickAction('emergency')">
+                    <h4>🚨 Emergency Support</h4>
+                    <p>24/7 immediate assistance</p>
+                </div>
+                <div class="action-card" onclick="quickAction('schedule')">
+                    <h4>📅 Schedule Service</h4>
+                    <p>Book maintenance visit</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="chat">💬 AI Assistant</button>
+                <button class="tab" data-tab="upload">📄 Documents</button>
+                <button class="tab" data-tab="warranty">📋 Warranty</button>
+                <button class="tab" data-tab="tracking">📍 Live Service</button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Chat Tab -->
+                <div id="chat" class="tab-content active">
+                    <div class="chat-container">
+                        <div class="chat-header">
+                            <h2>AI Support Assistant</h2>
+                            <p>Ask me anything about your robot, technical issues, warranty, or service</p>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message bot">
+                                <div class="message-avatar">🤖</div>
+                                <div class="message-content">
+                                    <p>Hello! I'm your AI assistant. I can help you with:</p>
+                                    <ul style="margin-top: 8px; padding-left: 20px;">
+                                        <li>Technical issues and troubleshooting</li>
+                                        <li>Warranty information and claims</li>
+                                        <li>Maintenance schedules</li>
+                                        <li>Spare parts and repairs</li>
+                                        <li>General robot questions</li>
+                                    </ul>
+                                    <p style="margin-top: 12px;">What can I help you with today?</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-input">
+                            <div class="input-wrapper">
+                                <input type="text" id="chatInput" placeholder="Ask me anything about your robot..." onkeypress="handleKeyPress(event)">
+                                <div class="input-actions">
+                                    <button class="icon-btn" onclick="attachFile()" title="Attach file">📎</button>
+                                    <button class="icon-btn" onclick="captureImage()" title="Take photo">📷</button>
+                                </div>
+                                <button class="send-btn" onclick="sendMessage()">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Tab -->
+                <div id="upload" class="tab-content">
+                    <div class="upload-section">
+                        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon">📤</div>
+                            <h3>Upload Robot Documents</h3>
+                            <p>Upload manuals, warranty cards, technical specifications, or any robot-related PDFs</p>
+                            <input type="file" id="fileInput" hidden accept=".pdf,.doc,.docx" multiple onchange="handleFileUpload(event)">
+                            <div class="file-types">
+                                <span class="file-type">📄 PDF</span>
+                                <span class="file-type">📝 DOC</span>
+                                <span class="file-type">📋 Manual</span>
+                            </div>
+                        </div>
+
+                        <div class="uploaded-files" id="uploadedFiles"></div>
+                    </div>
+                </div>
+
+                <!-- Warranty Tab -->
+                <div id="warranty" class="tab-content">
+                    <div class="warranty-grid">
+                        <div class="warranty-card">
+                            <div class="warranty-header">
+                                <div>
+                                    <h3>🤖 ROBOT-001</h3>
+                                    <p style="opacity: 0.8; font-size: 14px;">Model: RoboArm Pro X1</p>
+                                </div>
+                                <span class="warranty-status">✓ Active</span>
+                            </div>
+                            <div class="warranty-details">
+                                <div class="warranty-detail">
+                                    <span>Purchase Date:</span>
+                                    <strong>Jan 15, 2024</strong>
+                                </div>
+                                <div class="warranty-detail">
+                                    <span>Warranty Period:</span>
+                                    <strong>2 Years</strong>
+                                </div>
+                                <div class="warranty-detail">
+                                    <span>Expires:</span>
+                                    <strong>Jan 15, 2026</strong>
+                                </div>
+                                <div class="warranty-detail">
+                                    <span>Coverage:</span>
+                                    <strong>Full Parts & Labor</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="warranty-card">
+                            <div class="warranty-header">
+                                <div>
+                                    <h3>🤖 ROBOT-002</h3>
+                                    <p style="opacity: 0.8; font-size: 14px;">Model: MobileBot Plus</p>
+                                </div>
+                                <span class="warranty-status">✓ Active</span>
+                            </div>
+                            <div class="warranty-details">
+                                <div class="warranty-detail">
+                                    <span>Purchase Date:</span>
+                                    <strong>Mar 20, 2024</strong>
+                                </div>
+                                <div class="warranty-detail">
+                                    <span>Warranty Period:</span>
+                                    <strong>3 Years</strong>
+                                </div>
+                                <div class="warranty-detail">
+                                    <span>Expires:</span>
+                                    <strong>Mar 20, 2027</strong>
+                                </div>
+                                <div class="warranty-detail">
+                                    <span>Coverage:</span>
+                                    <strong>Extended Premium</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tracking Tab -->
+                <div id="tracking" class="tab-content">
+                    <div class="tracking-container">
+                        <div id="map"></div>
+                        <div class="tracking-sidebar">
+                            <div class="service-status">
+                                <span class="status-badge active">🚗 Service In Progress</span>
+                                <h3 style="margin-bottom: 8px;">Technician: John Smith</h3>
+                                <p style="color: #999; font-size: 14px;">ETA: 15 minutes</p>
+                                <p style="color: #999; font-size: 14px; margin-top: 4px;">📍 2.3 km away</p>
+                            </div>
+
+                            <div class="timeline">
+                                <h3 style="margin-bottom: 16px; font-size: 16px;">Service Timeline</h3>
+                                
+                                <div class="timeline-item">
+                                    <div class="timeline-icon">✓</div>
+                                    <div class="timeline-content">
+                                        <h4>Request Received</h4>
+                                        <p>10:30 AM - Service request confirmed</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-icon">✓</div>
+                                    <div class="timeline-content">
+                                        <h4>Technician Assigned</h4>
+                                        <p>10:45 AM - John Smith assigned</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-icon">🚗</div>
+                                    <div class="timeline-content">
+                                        <h4>En Route</h4>
+                                        <p>11:00 AM - Currently traveling</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-icon">⏳</div>
+                                    <div class="timeline-content">
+                                        <h4>Arrival Expected</h4>
+                                        <p>11:15 AM - ETA 15 minutes</p>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-icon">⚙️</div>
+                                    <div class="timeline-content">
+                                        <h4>Service Start</h4>
+                                        <p>Pending arrival</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tab Switching
+        document.querySelectorAll('.menu-item, .tab').forEach(item => {
+            item.addEventListener('click', function() {
+                const tabName = this.dataset.tab;
+                
+                // Update menu items
+                document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+                document.querySelectorAll(`.menu-item[data-tab="${tabName}"]`).forEach(m => m.classList.add('active'));
+                
+                // Update tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll(`.tab[data-tab="${tabName}"]`).forEach(t => t.classList.add('active'));
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+                
+                // Initialize map if tracking tab
+                if (tabName === 'tracking') {
+                    initMap();
+                }
+            });
+        });
+
+        // Chat functionality
+        const responses = {
+            'warranty': 'Your robot comes with a 2-year comprehensive warranty covering all parts and labor. You can check your warranty status in the Warranty tab. Would you like to file a claim?',
+            'technical': 'I can help with technical issues! Please describe the problem you\'re experiencing, or upload photos/videos of the issue for better diagnosis.',
+            'battery': '🔋 For battery issues:\n1. Check if charging cable is properly connected\n2. Verify power outlet is working\n3. Battery typically lasts 4-6 hours\n4. Replace after 500 charge cycles\nIs your robot charging properly?',
+            'service': '📅 I can schedule a service visit for you. Our technicians are available:\n- Monday-Friday: 8 AM - 8 PM\n- Saturday: 9 AM - 5 PM\n- Emergency 24/7\nWhen would you like to schedule?',
+            'repair': '🔧 For repairs, I need to know:\n1. What component needs repair?\n2. Is it under warranty?\n3. Upload photos of the damage\nI can provide cost estimates and schedule service.',
+            'default': 'I can help you with warranty information, technical issues, service scheduling, and repairs. Could you please be more specific about what you need help with?'
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping();
+            
+            // Generate AI response
+            setTimeout(() => {
+                hideTyping();
+                const response = generateResponse(message);
+                addMessage(response, 'bot');
+            }, 1500);
+        }
+
+        function generateResponse(message) {
+            const lower = message.toLowerCase();
+            
+            if (lower.includes('warrant')) return responses.warranty;
+            if (lower.includes('technical') || lower.includes('problem') || lower.includes('issue')) return responses.technical;
+            if (lower.includes('battery') || lower.includes('charge')) return responses.battery;
+            if (lower.includes('service') || lower.includes('schedule') || lower.includes('visit')) return responses.service;
+            if (lower.includes('repair') || lower.includes('fix') || lower.includes('broken')) return responses.repair;
+            
+            return responses.default;
+        }
+
+        function addMessage(text, type) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = type === 'bot' ? '🤖' : '👤';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <p style="white-space: pre-line;">${text}</p>
+                </div>
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping() {
+            const container = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function attachFile() {
+            alert('📎 File attachment feature\n\nYou can attach:\n• Photos of issues\n• Error screenshots\n• Document scans');
+        }
+
+        function captureImage() {
+            alert('📷 Camera capture feature\n\nTake photos of:\n• Robot components\n• Error messages\n• Damage areas');
+        }
+
+        // File Upload
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const container = document.getElementById('uploadedFiles');
+            
+            Array.from(files).forEach(file => {
+                const fileCard = document.createElement('div');
+                fileCard.className = 'file-card';
+                fileCard.innerHTML = `
+                    <div class="file-icon">📄</div>
+                    <div class="file-info">
+                        <h4>${file.name}</h4>
+                        <p>${(file.size / 1024).toFixed(2)} KB • Uploaded just now</p>
+                    </div>
+                `;
+                container.appendChild(fileCard);
+            });
+            
+            // Send success message to chat
+            addMessage(`✅ Successfully uploaded ${files.length} document(s). AI is analyzing the content to help you better.`, 'bot');
+        }
+
+        // Quick Actions
+        function quickAction(type) {
+            if (type === 'emergency') {
+                alert('🚨 Emergency Support\n\nConnecting to 24/7 emergency line...\nPhone: +1-800-ROBOT-911\nEstimated wait time: < 30 seconds');
+            } else if (type === 'schedule') {
+                alert('📅 Schedule Service\n\nAvailable slots:\n• Today 3:00 PM\n• Tomorrow 10:00 AM\n• Tomorrow 2:00 PM\n\nSelect preferred time...');
+            }
+        }
+
+        // Map initialization
+        let map;
+        function initMap() {
+            if (map) return;
+            
+            map = L.map('map').setView([40.7128, -74.0060], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Home location
+            const homeIcon = L.divIcon({
+                html: '<div style="background: #667eea; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">🏠</div>',
+                className: '',
+                iconSize: [30, 30]
+            });
+            L.marker([40.7128, -74.0060], {icon: homeIcon}).addTo(map)
+                .bindPopup('<b>Your Home</b><br>Service Location');
+            
+            // Technician location
+            const techIcon = L.divIcon({
+                html: '<div style="background: #10b981; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; border: 3px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">🚗</div>',
+                className: '',
+                iconSize: [30, 30]
+            });
+            const techMarker = L.marker([40.7300, -73.9950], {icon: techIcon}).addTo(map)
+                .bindPopup('<b>Technician</b><br>John Smith<br>ETA: 15 min');
+            
+            // Animate technician movement
+            let lat = 40.7300;
+            setInterval(() => {
+                lat -= 0.0010;
+                techMarker.setLatLng([lat, -73.9950]);
+            }, 2000);
+        }
+
+        // Auto-scroll chat
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>

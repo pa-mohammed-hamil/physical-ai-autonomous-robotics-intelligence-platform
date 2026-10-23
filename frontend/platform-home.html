@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical AI Robotics Platform - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .feature-badge.new {
+            background: rgba(251, 191, 36, 0.3);
+            color: #fbbf24;
+        }
+
+        .feature-badge.beta {
+            background: rgba(139, 92, 246, 0.3);
+            color: #8b5cf6;
+        }
+
+        .launch-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .launch-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin: 40px 0 20px;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Physical AI Robotics Platform</h1>
+            <p>Autonomous Robotics Intelligence Platform</p>
+            <span class="version-badge">v2.7.0 - Production Ready</span>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">32</div>
+                <div class="stat-label">Features</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">7</div>
+                <div class="stat-label">New in v2.7</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Production Ready</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">20+</div>
+                <div class="stat-label">API Endpoints</div>
+            </div>
+        </div>
+
+        <div class="category-title">🎬 Latest Features (v2.7)</div>
+        <div class="features-grid">
+            <div class="feature-card" onclick="window.location.href='/frontend/video-streaming'">
+                <div class="feature-icon">📹</div>
+                <div class="feature-title">Video Streaming & Tutorials</div>
+                <div class="feature-description">
+                    Live video streaming from robots with 9 camera types, 6 pre-loaded tutorials, 
+                    guided operations (First Use, Maintenance, Calibration), and recording system.
+                </div>
+                <span class="feature-badge new">NEW</span>
+                <span class="feature-badge">6 Tutorials</span>
+                <span class="feature-badge">4 Quality Levels</span>
+                <a href="/frontend/video-streaming" class="launch-btn">Launch Video System →</a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/frontend/ar-vr-viewer'">
+                <div class="feature-icon">🥽</div>
+                <div class="feature-title">AR/VR Integration</div>
+                <div class="feature-description">
+                    Immersive robot monitoring with VR headsets, AR glasses, and WebXR. 
+                    7 view modes, spatial anchors, holographic overlays, hand gesture controls, and haptic feedback.
+                </div>
+                <span class="feature-badge new">NEW</span>
+                <span class="feature-badge">8 Devices</span>
+                <span class="feature-badge">7 View Modes</span>
+                <a href="/frontend/ar-vr-viewer" class="launch-btn">Launch AR/VR →</a>
+            </div>
+        </div>
+
+        <div class="category-title">🎨 Core Features</div>
+        <div class="features-grid">
+            <div class="feature-card" onclick="window.location.href='/frontend/robot-3d-viewer'">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">3D Robot Viewer</div>
+                <div class="feature-description">
+                    Browser-based 3D robot visualization with Three.js. Real-time telemetry, 
+                    joint controls, trajectory execution, and camera views at 30 FPS.
+                </div>
+                <span class="feature-badge">✓ Ready</span>
+                <a href="/frontend/robot-3d-viewer" class="launch-btn">Launch 3D Viewer →</a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/frontend/ai-support-assistant'">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">AI Support Assistant</div>
+                <div class="feature-description">
+                    Intelligent chatbot with PDF upload, warranty card management, technical issue resolution, 
+                    and live technician tracking with real-time location updates.
+                </div>
+                <span class="feature-badge">✓ Ready</span>
+                <a href="/frontend/ai-support-assistant" class="launch-btn">Launch AI Assistant →</a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/frontend/robot-alerts-pro-dashboard'">
+                <div class="feature-icon">🚨</div>
+                <div class="feature-title">Alert System</div>
+                <div class="feature-description">
+                    Multi-channel alert system with 20+ alert types, 5 notification channels 
+                    (Email/SMS/WhatsApp/Push/Webhook), biometric authentication, and real-time monitoring.
+                </div>
+                <span class="feature-badge">✓ Ready</span>
+                <a href="/frontend/robot-alerts-pro-dashboard" class="launch-btn">Launch Alerts →</a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/frontend/damage-assessment'">
+                <div class="feature-icon">📸</div>
+                <div class="feature-title">Image Damage Assessment</div>
+                <div class="feature-description">
+                    Upload robot images for AI-powered damage detection. Automatic cost analysis, 
+                    repair vs replacement recommendations, and maintenance scheduling.
+                </div>
+                <span class="feature-badge">✓ Ready</span>
+                <a href="/frontend/damage-assessment" class="launch-btn">Launch Assessment →</a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/'">
+                <div class="feature-icon">💻</div>
+                <div class="feature-title">Code Generation</div>
+                <div class="feature-description">
+                    AI-powered code generation for robot control scripts. Natural language to code, 
+                    10+ templates, syntax highlighting, and immediate execution.
+                </div>
+                <span class="feature-badge">✓ Ready</span>
+                <a href="/" class="launch-btn">Launch Code Gen →</a>
+            </div>
+
+            <div class="feature-card" onclick="window.location.href='/index.html'">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Robot Dashboard</div>
+                <div class="feature-description">
+                    Main dashboard for fleet monitoring, robot health tracking, work orders, 
+                    telemetry visualization, and mission planning.
+                </div>
+                <span class="feature-badge">✓ Ready</span>
+                <a href="/index.html" class="launch-btn">Launch Dashboard →</a>
+            </div>
+        </div>
+
+        <div class="category-title">📚 Documentation & Resources</div>
+        <div class="features-grid">
+            <div class="feature-card" onclick="window.location.href='/api/docs'">
+                <div class="feature-icon">📖</div>
+                <div class="feature-title">API Documentation</div>
+                <div class="feature-description">
+                    Interactive Swagger UI with all API endpoints documented. Test endpoints, 
+                    view request/response schemas, and explore the complete API.
+                </div>
+                <span class="feature-badge">✓ Interactive</span>
+                <a href="/api/docs" class="launch-btn">Open API Docs →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📄</div>
+                <div class="feature-title">Features Guide v2.7</div>
+                <div class="feature-description">
+                    Complete documentation of all 32 platform features across 8 categories. 
+                    Includes setup instructions, use cases, and technical specifications.
+                </div>
+                <span class="feature-badge">✓ Complete</span>
+                <span class="feature-badge">32 Features</span>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <div class="feature-title">System Health</div>
+                <div class="feature-description">
+                    Platform status: All systems operational. Video Streaming ✓, AR/VR ✓, 
+                    API endpoints healthy, WebSocket connections active.
+                </div>
+                <span class="feature-badge">✓ Healthy</span>
+                <a href="/api/v1/health" class="launch-btn">Check Health →</a>
+            </div>
+        </div>
+
+        <div class="category-title">🚀 Quick Actions</div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎥</div>
+                <div class="feature-title">Start Live Stream</div>
+                <div class="feature-description">
+                    Quickly start a live video stream from any robot camera. Choose quality preset 
+                    and begin streaming in seconds.
+                </div>
+                <a href="/frontend/video-streaming" class="launch-btn">Start Streaming →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">👓</div>
+                <div class="feature-title">Enter VR Mode</div>
+                <div class="feature-description">
+                    Launch AR/VR viewer and connect to robots in immersive 3D space. Supports 
+                    VR headsets, AR glasses, and WebXR browsers.
+                </div>
+                <a href="/frontend/ar-vr-viewer" class="launch-btn">Enter VR →</a>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📚</div>
+                <div class="feature-title">Watch Tutorial</div>
+                <div class="feature-description">
+                    Browse 6 pre-loaded video tutorials for robot setup, maintenance, 
+                    troubleshooting, and advanced operations.
+                </div>
+                <a href="/frontend/video-streaming" class="launch-btn">Browse Tutorials →</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Physical AI Autonomous Robotics Intelligence Platform v2.7.0</p>
+            <p>© 2024 - All features production-ready</p>
+            <p style="margin-top: 10px;">
+                <a href="/api/docs" style="color: white; margin: 0 10px;">API Docs</a> | 
+                <a href="/api/v1/health" style="color: white; margin: 0 10px;">Health Check</a> | 
+                <a href="/index.html" style="color: white; margin: 0 10px;">Main Dashboard</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Check API health on load
+        fetch('/api/v1/health')
+            .then(res => res.json())
+            .then(data => {
+                console.log('✓ Platform Status:', data);
+                console.log('✓ Available Features:', data.features);
+            })
+            .catch(err => console.error('Health check failed:', err));
+
+        // Add click tracking
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('launch-btn')) {
+                    const link = this.querySelector('.launch-btn');
+                    if (link) {
+                        window.location.href = link.href;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
